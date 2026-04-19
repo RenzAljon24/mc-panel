@@ -1,0 +1,152 @@
+// Self-hosted MC panel schema. Tenant-ready: everything keyed on serverId.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ---------- Auth (Better-Auth compatible) ----------
+
+model User {
+  id            String    @id
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  name          String?
+  image         String?
+  role          String    @default("owner")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+  servers  Server[]       @relation("ServerOwner")
+  events   AuditEvent[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ---------- Minecraft control plane ----------
+
+model Server {
+  id             String   @id @default(cuid())
+  ownerId        String
+  name           String
+  jarType        String   @default("paper")
+  jarVersion     String   @default("1.21.4")
+  paperBuild     Int?
+  ramMb          Int      @default(3072)
+  portJava       Int      @default(25565)
+  portBedrock    Int      @default(19132)
+  portRcon       Int      @default(25575)
+  rconPassword   String
+  idleTimeoutSec Int      @default(600)
+  onlineMode     Boolean  @default(false)
+  motd           String   @default("A cross-play cracked server")
+  difficulty     String   @default("normal")
+  gamemode       String   @default("survival")
+  maxPlayers     Int      @default(20)
+  viewDistance   Int      @default(10)
+  whitelist      Boolean  @default(true)
+  status         String   @default("idle")
+  hostNodeId     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  owner   User         @relation("ServerOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  plugins Plugin[]
+  files   ServerFile[]
+  backups Backup[]
+  events  AuditEvent[]
+}
+
+model Plugin {
+  id        String   @id @default(cuid())
+  serverId  String
+  slug      String
+  name      String
+  source    String
+  version   String
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@unique([serverId, slug])
+}
+
+model ServerFile {
+  id          String   @id @default(cuid())
+  serverId    String
+  path        String
+  contentHash String
+  updatedAt   DateTime @updatedAt
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@unique([serverId, path])
+}
+
+model Backup {
+  id         String   @id @default(cuid())
+  serverId   String
+  sizeBytes  BigInt
+  storageKey String
+  kind       String   @default("manual")
+  createdAt  DateTime @default(now())
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+}
+
+model AuditEvent {
+  id          String   @id @default(cuid())
+  serverId    String?
+  userId      String?
+  kind        String
+  payloadJson String   @default("{}")
+  createdAt   DateTime @default(now())
+
+  server Server? @relation(fields: [serverId], references: [id], onDelete: SetNull)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
