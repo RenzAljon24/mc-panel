@@ -19,7 +19,7 @@ export function ServerTabs({ serverId }: { serverId: string }) {
   const pathname = usePathname();
   const base = `/servers/${serverId}`;
   return (
-    <nav className="flex gap-1 border-b">
+    <nav className="flex border-b border-border mt-1 mb-0">
       {TABS.map((t) => {
         const href = `${base}${t.href}`;
         const active =
@@ -31,9 +31,9 @@ export function ServerTabs({ serverId }: { serverId: string }) {
             key={t.href}
             href={href}
             className={cn(
-              "-mb-px border-b-2 px-4 py-2 text-sm transition",
+              "-mb-px border-b-2 px-3 py-2.5 text-xs font-mono transition-colors",
               active
-                ? "border-foreground text-foreground"
+                ? "border-primary text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >

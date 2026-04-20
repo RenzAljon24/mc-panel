@@ -38,7 +38,7 @@ export function FileEditor({
         value={content}
         onChange={(e) => setContent(e.target.value)}
         spellCheck={false}
-        className="bg-muted/40 h-[480px] w-full rounded-md border p-3 font-mono text-xs leading-relaxed focus:outline-none"
+        className="h-[480px] w-full border border-border bg-[#FAFAFA] p-3 font-mono text-xs leading-relaxed focus:outline-none focus:border-primary"
       />
       <div className="flex items-center justify-between">
         <span className="text-muted-foreground text-xs">

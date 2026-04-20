@@ -6,23 +6,31 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>MC Panel</CardTitle>
-          <CardDescription>Sign in to manage your Minecraft server</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+      <div className="w-full max-w-sm space-y-8">
+        {/* ASCII-art brand mark */}
+        <div className="text-center">
+          <pre className="inline-block font-mono text-[10px] leading-tight text-foreground select-none">
+{`███╗   ███╗ ██████╗
+████╗ ████║██╔════╝
+██╔████╔██║██║
+██║╚██╔╝██║██║
+██║ ╚═╝ ██║╚██████╗
+╚═╝     ╚═╝ ╚═════╝  PANEL`}
+          </pre>
+          <p className="mt-3 text-xs text-muted-foreground">Sign in to manage your Minecraft server</p>
+        </div>
+
+        <div className="border border-border p-6 space-y-5">
           <Suspense fallback={<LoginFormSkeleton />}>
             <LoginForm />
           </Suspense>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

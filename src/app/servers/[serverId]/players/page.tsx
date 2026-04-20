@@ -5,8 +5,6 @@ import { prisma } from "@/lib/prisma";
 import { getStatus } from "@/lib/systemd";
 import { listPlayers, mockRoster, runCommand } from "@/lib/rcon";
 import { MOCK_INFRA } from "@/lib/mock";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { PlayerActions, AddToList } from "./player-actions";
 
 export default async function PlayersPage({
@@ -52,51 +50,64 @@ export default async function PlayersPage({
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            Online ({online.length} / {server.maxPlayers})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="space-y-4">
+      {/* Online players */}
+      <div className="border border-border">
+        <div className="px-5 py-3 border-b border-border">
+          <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+            Online{" "}
+            <span className="text-foreground">
+              {online.length} / {server.maxPlayers}
+            </span>
+          </h2>
+        </div>
+        <div className="px-5 py-3">
           {status !== "up" ? (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground py-2">
               Server is {status}. Start it to see online players.
             </p>
           ) : online.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No players online.</p>
+            <p className="text-sm text-muted-foreground py-2">No players online.</p>
           ) : (
-            <ul className="divide-y">
+            <ul className="divide-y divide-border">
               {online.map((p) => (
-                <li key={p} className="flex items-center justify-between gap-2 py-2">
+                <li key={p} className="flex items-center justify-between gap-2 py-2.5">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm">{p}</span>
-                    {ops.includes(p) && <Badge variant="secondary">op</Badge>}
-                    {whitelist.includes(p) && <Badge variant="outline">whitelisted</Badge>}
-                    {p.startsWith(".") && <Badge>bedrock</Badge>}
+                    <span className="font-mono text-sm text-foreground">{p}</span>
+                    {ops.includes(p) && (
+                      <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">op</span>
+                    )}
+                    {whitelist.includes(p) && (
+                      <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">wl</span>
+                    )}
+                    {p.startsWith(".") && (
+                      <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">bedrock</span>
+                    )}
                   </div>
                   <PlayerActions serverId={server.id} player={p} isOp={ops.includes(p)} />
                 </li>
               ))}
             </ul>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Whitelist ({whitelist.length})</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
+        {/* Whitelist */}
+        <div className="border border-border">
+          <div className="px-5 py-3 border-b border-border">
+            <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+              Whitelist <span className="text-foreground">({whitelist.length})</span>
+            </h2>
+          </div>
+          <div className="px-5 py-3 space-y-3">
             {whitelist.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No whitelisted players.</p>
+              <p className="text-sm text-muted-foreground py-2">No whitelisted players.</p>
             ) : (
-              <ul className="divide-y">
+              <ul className="divide-y divide-border">
                 {whitelist.map((p) => (
-                  <li key={p} className="flex items-center justify-between py-2">
-                    <span className="font-mono text-sm">{p}</span>
+                  <li key={p} className="flex items-center justify-between py-2.5">
+                    <span className="font-mono text-sm text-foreground">{p}</span>
                     <PlayerActions
                       serverId={server.id}
                       player={p}
@@ -108,21 +119,24 @@ export default async function PlayersPage({
               </ul>
             )}
             <AddToList serverId={server.id} kind="whitelist" />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Banned ({banned.length})</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
+        {/* Banned */}
+        <div className="border border-border">
+          <div className="px-5 py-3 border-b border-border">
+            <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+              Banned <span className="text-foreground">({banned.length})</span>
+            </h2>
+          </div>
+          <div className="px-5 py-3">
             {banned.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No banned players.</p>
+              <p className="text-sm text-muted-foreground py-2">No banned players.</p>
             ) : (
-              <ul className="divide-y">
+              <ul className="divide-y divide-border">
                 {banned.map((p) => (
-                  <li key={p} className="flex items-center justify-between py-2">
-                    <span className="font-mono text-sm">{p}</span>
+                  <li key={p} className="flex items-center justify-between py-2.5">
+                    <span className="font-mono text-sm text-foreground">{p}</span>
                     <PlayerActions
                       serverId={server.id}
                       player={p}
@@ -133,8 +147,8 @@ export default async function PlayersPage({
                 ))}
               </ul>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

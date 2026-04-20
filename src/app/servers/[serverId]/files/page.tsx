@@ -4,8 +4,6 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getNodeKind, listDir, parentPath, readTextFile } from "@/lib/files";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { FileEditor } from "./file-editor";
 
 function formatBytes(n?: number): string {
@@ -39,32 +37,30 @@ export default async function FilesPage({
 
   if (kind === "missing") {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Files</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground text-sm">Path not found: {current || "/"}</p>
-          <Link href={base} className="mt-2 inline-block text-sm underline">
+      <div className="border border-border">
+        <div className="px-5 py-3 border-b border-border">
+          <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Files</h2>
+        </div>
+        <div className="p-5">
+          <p className="text-sm text-muted-foreground font-mono">Path not found: {current || "/"}</p>
+          <Link href={base} className="mt-2 inline-block text-sm text-primary hover:underline font-mono">
             Back to root
           </Link>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   if (kind === "file") {
     const { content, binary } = await readTextFile(server.id, current);
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            <Breadcrumbs base={base} crumbs={crumbs} />
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <div className="border border-border">
+        <div className="px-5 py-3 border-b border-border">
+          <Breadcrumbs base={base} crumbs={crumbs} />
+        </div>
+        <div className="p-5 space-y-3">
           {binary ? (
-            <div className="bg-muted/40 rounded-md border p-3 font-mono text-sm">
+            <div className="border border-border bg-[#FAFAFA] p-3 font-mono text-sm text-muted-foreground">
               {content} — binary file, not editable in browser.
             </div>
           ) : (
@@ -72,57 +68,61 @@ export default async function FilesPage({
           )}
           <Link
             href={`${base}?path=${encodeURIComponent(parentPath(current))}`}
-            className="text-muted-foreground inline-block text-sm hover:underline"
+            className="text-xs text-muted-foreground font-mono hover:text-foreground transition-colors"
           >
             ← Back to {parentPath(current) || "root"}
           </Link>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   const entries = await listDir(server.id, current);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <Breadcrumbs base={base} crumbs={crumbs} />
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="border border-border">
+      <div className="px-5 py-3 border-b border-border">
+        <Breadcrumbs base={base} crumbs={crumbs} />
+      </div>
+      <div>
         {entries.length === 0 ? (
-          <p className="text-muted-foreground text-sm">Empty directory.</p>
+          <p className="px-5 py-4 text-sm text-muted-foreground">Empty directory.</p>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y divide-border">
             {current && (
-              <li className="py-2">
+              <li className="px-5 py-2.5">
                 <Link
                   href={`${base}?path=${encodeURIComponent(parentPath(current))}`}
-                  className="text-sm hover:underline"
+                  className="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
                 >
                   ../
                 </Link>
               </li>
             )}
             {entries.map((e) => (
-              <li key={e.path} className="flex items-center justify-between py-2">
+              <li key={e.path} className="flex items-center justify-between px-5 py-2.5 hover:bg-accent transition-colors">
                 <Link
                   href={`${base}?path=${encodeURIComponent(e.path)}`}
-                  className="flex items-center gap-2 text-sm hover:underline"
+                  className="flex items-center gap-2 text-sm font-mono text-foreground hover:text-primary transition-colors"
                 >
-                  <span className="font-mono">
-                    {e.kind === "dir" ? `${e.name}/` : e.name}
-                  </span>
-                  {e.kind === "dir" && <Badge variant="outline">dir</Badge>}
+                  {e.kind === "dir" ? (
+                    <span className="text-muted-foreground">{e.name}/</span>
+                  ) : (
+                    <span>{e.name}</span>
+                  )}
+                  {e.kind === "dir" && (
+                    <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
+                      dir
+                    </span>
+                  )}
                 </Link>
-                <span className="text-muted-foreground text-xs">{formatBytes(e.sizeBytes)}</span>
+                <span className="text-xs text-muted-foreground font-mono">{formatBytes(e.sizeBytes)}</span>
               </li>
             ))}
           </ul>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
@@ -146,14 +146,17 @@ function Breadcrumbs({
   crumbs: { name: string; path: string }[];
 }) {
   return (
-    <span className="flex flex-wrap items-center gap-1 text-base">
-      <Link href={base} className="hover:underline">
+    <span className="flex flex-wrap items-center gap-1 text-xs font-mono text-muted-foreground">
+      <Link href={base} className="hover:text-foreground transition-colors">
         /srv/mc/&lt;server&gt;
       </Link>
       {crumbs.map((c) => (
         <span key={c.path} className="flex items-center gap-1">
-          <span className="text-muted-foreground">/</span>
-          <Link href={`${base}?path=${encodeURIComponent(c.path)}`} className="hover:underline">
+          <span>/</span>
+          <Link
+            href={`${base}?path=${encodeURIComponent(c.path)}`}
+            className="hover:text-foreground transition-colors"
+          >
             {c.name}
           </Link>
         </span>

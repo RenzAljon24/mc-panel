@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function formatBytes(n: bigint): string {
   const num = Number(n);
@@ -31,31 +30,35 @@ export default async function BackupsPage({
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Backups ({backups.length})</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="border border-border">
+      <div className="px-5 py-3 border-b border-border">
+        <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+          Backups <span className="text-foreground">({backups.length})</span>
+        </h2>
+      </div>
+      <div className="px-5 py-3">
         {backups.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground py-2">
             No backups yet. The nightly restic job on the VPS will populate this list.
           </p>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y divide-border">
             {backups.map((b) => (
-              <li key={b.id} className="flex items-center justify-between py-2">
-                <div>
-                  <div className="font-mono text-sm">{b.storageKey}</div>
-                  <div className="text-xs text-muted-foreground">
+              <li key={b.id} className="flex items-center justify-between py-3">
+                <div className="min-w-0">
+                  <div className="font-mono text-sm text-foreground truncate">{b.storageKey}</div>
+                  <div className="text-xs text-muted-foreground font-mono mt-0.5">
                     {b.kind} · {b.createdAt.toLocaleString()}
                   </div>
                 </div>
-                <div className="text-sm text-muted-foreground">{formatBytes(b.sizeBytes)}</div>
+                <div className="text-sm text-muted-foreground font-mono ml-4 shrink-0">
+                  {formatBytes(b.sizeBytes)}
+                </div>
               </li>
             ))}
           </ul>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

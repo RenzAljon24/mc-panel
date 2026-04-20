@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage({
@@ -19,11 +18,13 @@ export default async function SettingsPage({
   if (!server) notFound();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Server settings</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="border border-border">
+      <div className="px-5 py-3 border-b border-border">
+        <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+          Server settings
+        </h2>
+      </div>
+      <div className="p-5">
         <SettingsForm
           serverId={server.id}
           defaults={{
@@ -38,7 +39,7 @@ export default async function SettingsPage({
             idleTimeoutSec: server.idleTimeoutSec,
           }}
         />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -66,7 +66,7 @@ export function SettingsForm({ serverId, defaults }: { serverId: string; default
       </Field>
       <Field label="Difficulty">
         <select
-          className="flex h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+          className="flex h-9 w-full border border-border bg-transparent px-3 text-sm font-mono"
           value={form.difficulty}
           onChange={(e) => setForm({ ...form, difficulty: e.target.value })}
         >
@@ -79,7 +79,7 @@ export function SettingsForm({ serverId, defaults }: { serverId: string; default
       </Field>
       <Field label="Default gamemode">
         <select
-          className="flex h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+          className="flex h-9 w-full border border-border bg-transparent px-3 text-sm font-mono"
           value={form.gamemode}
           onChange={(e) => setForm({ ...form, gamemode: e.target.value })}
         >

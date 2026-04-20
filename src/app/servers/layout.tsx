@@ -10,19 +10,19 @@ export default async function ServersLayout({ children }: { children: React.Reac
   if (!session) redirect("/login");
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b bg-background">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-          <Link href="/servers" className="font-semibold">
-            MC Panel
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="sticky top-0 z-50 border-b border-border bg-background">
+        <div className="mx-auto flex h-12 max-w-[1200px] items-center justify-between px-6">
+          <Link href="/servers" className="font-mono text-sm font-bold tracking-widest text-foreground hover:text-primary transition-colors">
+            MC PANEL
           </Link>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-muted-foreground">{session.user.email}</span>
+          <div className="flex items-center gap-4 text-xs">
+            <span className="text-muted-foreground font-mono">{session.user.email}</span>
             <SignOutButton />
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
+      <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-8">{children}</main>
     </div>
   );
 }

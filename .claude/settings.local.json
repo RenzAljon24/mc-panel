@@ -11,7 +11,9 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git push *)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "WebFetch(domain:skills.sh)",
+      "Bash(npx tsc *)"
     ]
   }
 }

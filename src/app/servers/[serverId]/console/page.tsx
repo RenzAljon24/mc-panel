@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { tailLog } from "@/lib/logs";
 import { getStatus } from "@/lib/systemd";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConsoleInput } from "./console-input";
 
 export default async function ConsolePage({
@@ -23,17 +22,18 @@ export default async function ConsolePage({
   const [status, lines] = await Promise.all([getStatus(server.id), tailLog(server.id, 200)]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Console</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="bg-muted/40 max-h-[500px] overflow-auto rounded-md border p-3 font-mono text-xs leading-relaxed">
+    <div className="border border-border">
+      <div className="px-5 py-3 border-b border-border">
+        <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Console</h2>
+      </div>
+      <div className="p-5 space-y-3">
+        {/* Log output — black on white monospace, no rounding, thin 1px border */}
+        <div className="max-h-[500px] overflow-auto border border-border bg-[#FAFAFA] p-3 font-mono text-xs leading-relaxed">
           {lines.length === 0 ? (
             <p className="text-muted-foreground">No log output yet.</p>
           ) : (
             lines.map((l, i) => (
-              <div key={i} className="whitespace-pre-wrap break-all">
+              <div key={i} className="whitespace-pre-wrap break-all text-foreground">
                 {l}
               </div>
             ))
@@ -41,11 +41,11 @@ export default async function ConsolePage({
         </div>
         <ConsoleInput serverId={server.id} disabled={status !== "up"} />
         {status !== "up" && (
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs text-muted-foreground font-mono">
             Server is {status}. Start it first to send commands.
           </p>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

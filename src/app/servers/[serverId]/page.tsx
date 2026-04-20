@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStatus } from "@/lib/systemd";
 import { listPlayers } from "@/lib/rcon";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function DashboardPage({
   params,
@@ -41,50 +40,57 @@ export default async function DashboardPage({
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            Players online ({players.length} / {server.maxPlayers})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      {/* Players panel */}
+      <div className="border border-border">
+        <div className="px-5 py-3 border-b border-border">
+          <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+            Players online{" "}
+            <span className="text-foreground">
+              {players.length} / {server.maxPlayers}
+            </span>
+          </h2>
+        </div>
+        <div className="px-5 py-4">
           {players.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               {status === "up" ? "No players online" : "Server is idle — join to wake it up"}
             </p>
           ) : (
-            <ul className="space-y-1 text-sm">
+            <ul className="divide-y divide-border">
               {players.map((p) => (
-                <li key={p} className="font-mono">
+                <li key={p} className="py-2 font-mono text-sm text-foreground">
                   {p}
                 </li>
               ))}
             </ul>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent activity</CardTitle>
-        </CardHeader>
-        <CardContent>
+      {/* Activity panel */}
+      <div className="border border-border">
+        <div className="px-5 py-3 border-b border-border">
+          <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+            Recent activity
+          </h2>
+        </div>
+        <div className="px-5 py-4">
           {recentEvents.length === 0 ? (
             <p className="text-sm text-muted-foreground">No events yet.</p>
           ) : (
-            <ul className="space-y-1 text-sm">
+            <ul className="divide-y divide-border">
               {recentEvents.map((e) => (
-                <li key={e.id} className="flex justify-between gap-2">
-                  <span className="font-mono">{e.kind}</span>
-                  <span className="text-muted-foreground">
+                <li key={e.id} className="flex justify-between gap-2 py-2">
+                  <span className="font-mono text-xs text-foreground">{e.kind}</span>
+                  <span className="text-xs text-muted-foreground font-mono">
                     {e.createdAt.toLocaleString()}
                   </span>
                 </li>
               ))}
             </ul>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
