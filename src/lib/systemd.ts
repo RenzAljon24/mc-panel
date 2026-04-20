@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { createConnection } from "node:net";
 import { promisify } from "node:util";
 import { MOCK_INFRA } from "./mock";
 
@@ -8,8 +9,11 @@ export type ServerStatus = "idle" | "starting" | "up" | "stopping" | "error";
 
 const mockStatuses = new Map<string, ServerStatus>();
 
+const PAPER_HOST = process.env.PAPER_HOST ?? "127.0.0.1";
+const PAPER_PORT = Number(process.env.PAPER_PORT ?? 25566);
+
 function unitName(): string {
-  return "paper@demo.service";
+  return "lazymc@demo.service";
 }
 
 export async function start(_serverId: string): Promise<void> {
@@ -39,25 +43,42 @@ export async function restart(_serverId: string): Promise<void> {
   await pExecFile("sudo", ["systemctl", "restart", unitName()]);
 }
 
+function probePort(host: string, port: number, timeoutMs = 400): Promise<boolean> {
+  return new Promise((resolve) => {
+    const socket = createConnection({ host, port });
+    const done = (ok: boolean) => {
+      socket.destroy();
+      resolve(ok);
+    };
+    socket.once("connect", () => done(true));
+    socket.once("error", () => done(false));
+    socket.setTimeout(timeoutMs, () => done(false));
+  });
+}
+
 export async function getStatus(_serverId: string): Promise<ServerStatus> {
   if (MOCK_INFRA) {
     return mockStatuses.get("demo") ?? "idle";
   }
 
+  let lazymcState = "inactive";
   try {
     const { stdout } = await pExecFile("sudo", [
       "systemctl",
       "is-active",
       unitName(),
     ]);
-
-    const s = stdout.trim();
-    if (s === "active") return "up";
-    if (s === "activating") return "starting";
-    if (s === "deactivating") return "stopping";
-    if (s === "failed") return "error";
-    return "idle";
-  } catch {
-    return "idle";
+    lazymcState = stdout.trim();
+  } catch (err: unknown) {
+    const e = err as { stdout?: string };
+    lazymcState = e.stdout?.trim() ?? "inactive";
   }
+
+  if (lazymcState === "failed") return "error";
+  if (lazymcState === "activating") return "starting";
+  if (lazymcState === "deactivating") return "stopping";
+  if (lazymcState !== "active") return "idle";
+
+  const paperAlive = await probePort(PAPER_HOST, PAPER_PORT);
+  return paperAlive ? "up" : "idle";
 }
