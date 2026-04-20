@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(MC_MOCK_INFRA=true npm run dev)",
+      "Bash(curl -s -o /dev/null -w \"login=%{http_code}\\\\n\" http://localhost:3000/login)",
+      "Bash(curl -s -o /dev/null -w \"servers=%{http_code}\\\\n\" http://localhost:3000/servers)",
+      "Bash(curl *)",
+      "Bash(taskkill *)"
+    ]
+  }
+}
