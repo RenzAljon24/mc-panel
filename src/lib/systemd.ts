@@ -8,42 +8,49 @@ export type ServerStatus = "idle" | "starting" | "up" | "stopping" | "error";
 
 const mockStatuses = new Map<string, ServerStatus>();
 
-export async function start(serverId: string): Promise<void> {
-  if (MOCK_INFRA) {
-    mockStatuses.set(serverId, "starting");
-    setTimeout(() => mockStatuses.set(serverId, "up"), 2000);
-    return;
-  }
-  await pExecFile("systemctl", ["start", `paper@${serverId}.service`]);
+function unitName(): string {
+  return "paper@demo.service";
 }
 
-export async function stop(serverId: string): Promise<void> {
+export async function start(_serverId: string): Promise<void> {
   if (MOCK_INFRA) {
-    mockStatuses.set(serverId, "stopping");
-    setTimeout(() => mockStatuses.set(serverId, "idle"), 2000);
+    mockStatuses.set("demo", "starting");
+    setTimeout(() => mockStatuses.set("demo", "up"), 2000);
     return;
   }
-  await pExecFile("systemctl", ["stop", `paper@${serverId}.service`]);
+  await pExecFile("sudo", ["systemctl", "start", unitName()]);
 }
 
-export async function restart(serverId: string): Promise<void> {
+export async function stop(_serverId: string): Promise<void> {
   if (MOCK_INFRA) {
-    mockStatuses.set(serverId, "starting");
-    setTimeout(() => mockStatuses.set(serverId, "up"), 3000);
+    mockStatuses.set("demo", "stopping");
+    setTimeout(() => mockStatuses.set("demo", "idle"), 2000);
     return;
   }
-  await pExecFile("systemctl", ["restart", `paper@${serverId}.service`]);
+  await pExecFile("sudo", ["systemctl", "stop", unitName()]);
 }
 
-export async function getStatus(serverId: string): Promise<ServerStatus> {
+export async function restart(_serverId: string): Promise<void> {
   if (MOCK_INFRA) {
-    return mockStatuses.get(serverId) ?? "idle";
+    mockStatuses.set("demo", "starting");
+    setTimeout(() => mockStatuses.set("demo", "up"), 3000);
+    return;
   }
+  await pExecFile("sudo", ["systemctl", "restart", unitName()]);
+}
+
+export async function getStatus(_serverId: string): Promise<ServerStatus> {
+  if (MOCK_INFRA) {
+    return mockStatuses.get("demo") ?? "idle";
+  }
+
   try {
-    const { stdout } = await pExecFile("systemctl", [
+    const { stdout } = await pExecFile("sudo", [
+      "systemctl",
       "is-active",
-      `paper@${serverId}.service`,
+      unitName(),
     ]);
+
     const s = stdout.trim();
     if (s === "active") return "up";
     if (s === "activating") return "starting";
