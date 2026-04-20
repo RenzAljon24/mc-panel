@@ -6,7 +6,11 @@
       "Bash(curl -s -o /dev/null -w \"login=%{http_code}\\\\n\" http://localhost:3000/login)",
       "Bash(curl -s -o /dev/null -w \"servers=%{http_code}\\\\n\" http://localhost:3000/servers)",
       "Bash(curl *)",
-      "Bash(taskkill *)"
+      "Bash(taskkill *)",
+      "Bash(git fetch *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
