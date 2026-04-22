@@ -51,9 +51,14 @@ export async function runCommand(target: RconTarget, cmd: string): Promise<strin
 
 export async function listPlayers(target: RconTarget): Promise<string[]> {
   const raw = await runCommand(target, "list");
-  const match = raw.match(/players online:\s*(.*)$/i);
-  if (!match || !match[1].trim()) return [];
-  return match[1].split(",").map((s) => s.trim()).filter(Boolean);
+  const stripped = raw.replace(/§./g, "");
+  const idx = stripped.toLowerCase().indexOf("players online:");
+  if (idx === -1) return [];
+  const tail = stripped.slice(idx + "players online:".length);
+  return tail
+    .split(/[,\n\r]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 export async function broadcast(target: RconTarget, message: string): Promise<void> {

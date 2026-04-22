@@ -16,7 +16,8 @@
       "Bash(npx tsc *)",
       "Bash(npx prisma *)",
       "Bash(echo \"EXIT=$?\")",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Skill(shadcn)"
     ]
   }
 }

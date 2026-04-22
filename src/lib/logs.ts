@@ -1,7 +1,10 @@
-import { readFile } from "node:fs/promises";
+import { open, stat } from "node:fs/promises";
 import path from "node:path";
 import { MOCK_INFRA } from "./mock";
 import { serverRoot } from "./files";
+
+const READ_CHUNK = 64 * 1024;
+const MAX_BYTES = 2 * 1024 * 1024;
 
 const mockLines: Record<string, string[]> = {};
 
@@ -42,10 +45,47 @@ export async function tailLog(serverId: string, lines = 200): Promise<string[]> 
   }
   const file = path.join(serverRoot(serverId), "logs", "latest.log");
   try {
-    const buf = await readFile(file, "utf8");
-    return buf.split(/\r?\n/).filter(Boolean).slice(-lines);
+    return await tailFile(file, lines);
   } catch {
     return [];
+  }
+}
+
+async function tailFile(file: string, lines: number): Promise<string[]> {
+  const info = await stat(file);
+  const size = info.size;
+  if (size === 0) return [];
+
+  const handle = await open(file, "r");
+  try {
+    const collected: string[] = [];
+    let pos = size;
+    let carry = "";
+    let bytesRead = 0;
+
+    while (pos > 0 && collected.length <= lines && bytesRead < MAX_BYTES) {
+      const chunkSize = Math.min(READ_CHUNK, pos);
+      pos -= chunkSize;
+      const buf = Buffer.alloc(chunkSize);
+      await handle.read(buf, 0, chunkSize, pos);
+      bytesRead += chunkSize;
+
+      const text = buf.toString("utf8") + carry;
+      const parts = text.split(/\r?\n/);
+      carry = pos > 0 ? (parts.shift() ?? "") : "";
+
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const line = parts[i];
+        if (line.length === 0) continue;
+        collected.push(line);
+        if (collected.length >= lines) break;
+      }
+    }
+
+    if (carry && collected.length < lines) collected.push(carry);
+    return collected.reverse();
+  } finally {
+    await handle.close();
   }
 }
 

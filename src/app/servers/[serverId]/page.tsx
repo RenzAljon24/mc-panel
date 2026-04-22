@@ -20,6 +20,7 @@ export default async function DashboardPage({
 
   const status = await getStatus(server.id);
   let players: string[] = [];
+  let rconError: string | null = null;
   if (status === "up") {
     try {
       players = await listPlayers({
@@ -27,7 +28,9 @@ export default async function DashboardPage({
         port: server.portRcon,
         password: server.rconPassword,
       });
-    } catch {
+    } catch (err) {
+      rconError = err instanceof Error ? err.message : "RCON failed";
+      console.error(`[dashboard] listPlayers failed for ${server.id}:`, err);
       players = [];
     }
   }
@@ -78,7 +81,11 @@ export default async function DashboardPage({
               </div>
 
               <div className="border-t border-border pt-4">
-                {players.length === 0 ? (
+                {rconError ? (
+                  <p className="text-sm text-[#ff6666] font-mono">
+                    RCON error: {rconError}
+                  </p>
+                ) : players.length === 0 ? (
                   <p className="text-sm text-muted-foreground font-mono">
                     {isOnline ? "No players online" : "Server is idle"}
                   </p>
