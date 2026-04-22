@@ -2,8 +2,26 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { searchPlugins } from "@/lib/modrinth";
-import { InstallButton, UninstallButton, RestartBanner } from "./plugin-actions";
+import { searchPlugins as searchModrinth } from "@/lib/modrinth";
+import { searchPlugins as searchHangar } from "@/lib/hangar";
+import {
+  InstallButton,
+  UninstallButton,
+  RestartBanner,
+  UploadPluginCard,
+  InstallFromUrlCard,
+} from "./plugin-actions";
+
+type Source = "modrinth" | "hangar";
+
+type UnifiedHit = {
+  key: string;
+  source: Source;
+  slug: string;
+  title: string;
+  description: string;
+  downloads: number;
+};
 
 export default async function PluginsPage({
   params,
@@ -22,8 +40,34 @@ export default async function PluginsPage({
   });
   if (!server) notFound();
 
-  const installedSlugs = new Set(server.plugins.map((p) => p.slug));
-  const hits = q && q.length > 1 ? await searchPlugins(q, server.jarVersion).catch(() => []) : [];
+  const installedKeys = new Set(server.plugins.map((p) => `${p.source}:${p.slug}`));
+
+  const [modrinthHits, hangarHits] =
+    q && q.length > 1
+      ? await Promise.all([
+          searchModrinth(q, server.jarVersion).catch(() => []),
+          searchHangar(q, server.jarVersion).catch(() => []),
+        ])
+      : [[], []];
+
+  const merged: UnifiedHit[] = [
+    ...modrinthHits.map((h) => ({
+      key: `modrinth:${h.slug}`,
+      source: "modrinth" as const,
+      slug: h.slug,
+      title: h.title,
+      description: h.description,
+      downloads: h.downloads,
+    })),
+    ...hangarHits.map((h) => ({
+      key: `hangar:${h.slug}`,
+      source: "hangar" as const,
+      slug: h.slug,
+      title: h.title,
+      description: h.description,
+      downloads: h.downloads,
+    })),
+  ].sort((a, b) => b.downloads - a.downloads);
 
   return (
     <div className="space-y-4">
@@ -66,11 +110,17 @@ export default async function PluginsPage({
         </div>
       </div>
 
-      {/* Modrinth search */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <UploadPluginCard serverId={server.id} />
+        <InstallFromUrlCard serverId={server.id} />
+      </div>
+
+      {/* Plugin catalog (Modrinth + Hangar) */}
       <div className="border border-border">
         <div className="px-5 py-3 border-b border-border">
           <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-            Search Modrinth
+            Browse plugins
+            <span className="ml-2 text-muted-foreground/70">— Modrinth + Hangar</span>
           </h2>
         </div>
         <div className="p-5 space-y-4">
@@ -89,23 +139,34 @@ export default async function PluginsPage({
               Search
             </button>
           </form>
-          {hits.length === 0 ? (
+          {merged.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              {q ? "No results." : "Type a query to search the Modrinth plugin catalog."}
+              {q ? "No results." : "Type a query to search Modrinth and Hangar."}
             </p>
           ) : (
             <ul className="divide-y divide-border">
-              {hits.map((h) => {
-                const installed = installedSlugs.has(h.slug);
+              {merged.map((h) => {
+                const installed = installedKeys.has(h.key);
                 return (
-                  <li key={h.project_id} className="flex items-start justify-between gap-4 py-3">
+                  <li key={h.key} className="flex items-start justify-between gap-4 py-3">
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-foreground">{h.title}</div>
-                      <div className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{h.description}</div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{h.title}</span>
+                        <span
+                          className={`rounded border px-1.5 py-0.5 text-[10px] font-mono uppercase ${
+                            h.source === "modrinth"
+                              ? "border-[#1bd96a]/40 text-[#1bd96a]"
+                              : "border-[#3b82f6]/40 text-[#60a5fa]"
+                          }`}
+                        >
+                          {h.source}
+                        </span>
+                      </div>
+                      <div className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                        {h.description}
+                      </div>
                       <div className="mt-1 flex gap-2 text-[10px] text-muted-foreground font-mono">
                         <span>{h.downloads.toLocaleString()} downloads</span>
-                        <span>·</span>
-                        <span>latest: {h.latest_version}</span>
                       </div>
                     </div>
                     {installed ? (
@@ -113,7 +174,7 @@ export default async function PluginsPage({
                         Installed
                       </span>
                     ) : (
-                      <InstallButton serverId={server.id} slug={h.slug} />
+                      <InstallButton serverId={server.id} source={h.source} slug={h.slug} />
                     )}
                   </li>
                 );

@@ -67,19 +67,41 @@ export async function restartServer(serverId: string) {
   revalidatePath(`/servers/${serverId}`);
 }
 
-export async function installPlugin(serverId: string, slug: string): Promise<string> {
+export async function installPlugin(
+  serverId: string,
+  source: pluginsLib.PluginSource,
+  slug: string,
+): Promise<string> {
   const { server, session } = await loadServer(serverId);
-  const result = await pluginsLib.installPluginFromModrinth(server.id, slug);
+  const result =
+    source === "hangar"
+      ? await pluginsLib.installPluginFromHangar(server.id, slug)
+      : await pluginsLib.installPluginFromModrinth(server.id, slug);
   await prisma.auditEvent.create({
     data: {
       serverId: server.id,
       userId: session.user.id,
       kind: "plugin.install",
-      payloadJson: JSON.stringify({ slug, version: result.version }),
+      payloadJson: JSON.stringify({ source, slug, version: result.version }),
     },
   });
   revalidatePath(`/servers/${serverId}/plugins`);
-  return `Installed ${result.name} ${result.version}`;
+  return `Installed ${result.name} ${result.version} (${source})`;
+}
+
+export async function installPluginFromUrl(serverId: string, url: string): Promise<string> {
+  const { server, session } = await loadServer(serverId);
+  const result = await pluginsLib.installPluginFromUrl(server.id, url);
+  await prisma.auditEvent.create({
+    data: {
+      serverId: server.id,
+      userId: session.user.id,
+      kind: "plugin.install",
+      payloadJson: JSON.stringify({ source: "url", url, filename: result.filename }),
+    },
+  });
+  revalidatePath(`/servers/${serverId}/plugins`);
+  return `Installed ${result.filename}`;
 }
 
 export async function uninstallPlugin(serverId: string, pluginId: string): Promise<void> {

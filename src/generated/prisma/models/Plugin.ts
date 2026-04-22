@@ -232,7 +232,7 @@ export type PluginOrderByWithRelationInput = {
 
 export type PluginWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  serverId_slug?: Prisma.PluginServerIdSlugCompoundUniqueInput
+  serverId_source_slug?: Prisma.PluginServerIdSourceSlugCompoundUniqueInput
   AND?: Prisma.PluginWhereInput | Prisma.PluginWhereInput[]
   OR?: Prisma.PluginWhereInput[]
   NOT?: Prisma.PluginWhereInput | Prisma.PluginWhereInput[]
@@ -245,7 +245,7 @@ export type PluginWhereUniqueInput = Prisma.AtLeast<{
   enabled?: Prisma.BoolFilter<"Plugin"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Plugin"> | Date | string
   server?: Prisma.XOR<Prisma.ServerScalarRelationFilter, Prisma.ServerWhereInput>
-}, "id" | "serverId_slug">
+}, "id" | "serverId_source_slug">
 
 export type PluginOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -370,8 +370,9 @@ export type PluginOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type PluginServerIdSlugCompoundUniqueInput = {
+export type PluginServerIdSourceSlugCompoundUniqueInput = {
   serverId: string
+  source: string
   slug: string
 }
 

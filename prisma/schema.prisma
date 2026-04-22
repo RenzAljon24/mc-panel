@@ -115,7 +115,7 @@ model Plugin {
 
   server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
 
-  @@unique([serverId, slug])
+  @@unique([serverId, source, slug])
 }
 
 model ServerFile {
