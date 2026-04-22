@@ -50,38 +50,38 @@ export default async function PlayersPage({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Online players */}
-      <div className="border border-border">
-        <div className="px-5 py-3 border-b border-border">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-            Online{" "}
-            <span className="text-foreground">
+      <div className="border-2 border-border bg-card">
+        <div className="px-6 py-4 border-b-2 border-border bg-primary">
+          <h2 className="minecraft-title text-sm text-primary-foreground tracking-wider">
+            ONLINE{" "}
+            <span className="font-mono">
               {online.length} / {server.maxPlayers}
             </span>
           </h2>
         </div>
-        <div className="px-5 py-3">
+        <div className="px-6 py-4">
           {status !== "up" ? (
-            <p className="text-sm text-muted-foreground py-2">
+            <p className="font-mono text-sm text-muted-foreground py-2">
               Server is {status}. Start it to see online players.
             </p>
           ) : online.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-2">No players online.</p>
+            <p className="font-mono text-sm text-muted-foreground py-2">No players online.</p>
           ) : (
-            <ul className="divide-y divide-border">
+            <ul className="divide-y-2 divide-border">
               {online.map((p) => (
-                <li key={p} className="flex items-center justify-between gap-2 py-2.5">
+                <li key={p} className="flex items-center justify-between gap-3 py-3">
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-sm text-foreground">{p}</span>
                     {ops.includes(p) && (
-                      <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">op</span>
+                      <span className="border-2 border-[#ffdd00] bg-[#1a1a00] text-[#ffdd00] px-2 py-0.5 text-[10px] font-mono font-black">OP</span>
                     )}
                     {whitelist.includes(p) && (
-                      <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">wl</span>
+                      <span className="border-2 border-[#22cc22] bg-[#001100] text-[#22cc22] px-2 py-0.5 text-[10px] font-mono font-black">WL</span>
                     )}
                     {p.startsWith(".") && (
-                      <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">bedrock</span>
+                      <span className="border-2 border-[#5544ff] bg-[#0a0605] text-[#5544ff] px-2 py-0.5 text-[10px] font-mono font-black">BR</span>
                     )}
                   </div>
                   <PlayerActions serverId={server.id} player={p} isOp={ops.includes(p)} />
@@ -92,21 +92,21 @@ export default async function PlayersPage({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Whitelist */}
-        <div className="border border-border">
-          <div className="px-5 py-3 border-b border-border">
-            <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-              Whitelist <span className="text-foreground">({whitelist.length})</span>
+        <div className="border-2 border-border bg-card">
+          <div className="px-6 py-4 border-b-2 border-border bg-primary">
+            <h2 className="minecraft-title text-sm text-primary-foreground tracking-wider">
+              WHITELIST <span className="font-mono">({whitelist.length})</span>
             </h2>
           </div>
-          <div className="px-5 py-3 space-y-3">
+          <div className="px-6 py-4 space-y-4">
             {whitelist.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-2">No whitelisted players.</p>
+              <p className="font-mono text-sm text-muted-foreground py-2">No whitelisted players.</p>
             ) : (
-              <ul className="divide-y divide-border">
+              <ul className="divide-y-2 divide-border">
                 {whitelist.map((p) => (
-                  <li key={p} className="flex items-center justify-between py-2.5">
+                  <li key={p} className="flex items-center justify-between py-3">
                     <span className="font-mono text-sm text-foreground">{p}</span>
                     <PlayerActions
                       serverId={server.id}
@@ -123,19 +123,19 @@ export default async function PlayersPage({
         </div>
 
         {/* Banned */}
-        <div className="border border-border">
-          <div className="px-5 py-3 border-b border-border">
-            <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-              Banned <span className="text-foreground">({banned.length})</span>
+        <div className="border-2 border-border bg-card">
+          <div className="px-6 py-4 border-b-2 border-border bg-primary">
+            <h2 className="minecraft-title text-sm text-primary-foreground tracking-wider">
+              BANNED <span className="font-mono">({banned.length})</span>
             </h2>
           </div>
-          <div className="px-5 py-3">
+          <div className="px-6 py-4">
             {banned.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-2">No banned players.</p>
+              <p className="font-mono text-sm text-muted-foreground py-2">No banned players.</p>
             ) : (
-              <ul className="divide-y divide-border">
+              <ul className="divide-y-2 divide-border">
                 {banned.map((p) => (
-                  <li key={p} className="flex items-center justify-between py-2.5">
+                  <li key={p} className="flex items-center justify-between py-3">
                     <span className="font-mono text-sm text-foreground">{p}</span>
                     <PlayerActions
                       serverId={server.id}

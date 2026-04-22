@@ -10,10 +10,10 @@ export type ServerStatus = "idle" | "starting" | "up" | "stopping" | "error";
 const mockStatuses = new Map<string, ServerStatus>();
 
 const PAPER_HOST = process.env.PAPER_HOST ?? "127.0.0.1";
-const PAPER_PORT = Number(process.env.PAPER_PORT ?? 25566);
+const PAPER_PORT = Number(process.env.PAPER_PORT ?? 25565);
 
 function unitName(): string {
-  return "lazymc@demo.service";
+  return "paper@demo.service";
 }
 
 export async function start(_serverId: string): Promise<void> {
@@ -61,24 +61,24 @@ export async function getStatus(_serverId: string): Promise<ServerStatus> {
     return mockStatuses.get("demo") ?? "idle";
   }
 
-  let lazymcState = "inactive";
+  let unitState = "inactive";
   try {
     const { stdout } = await pExecFile("sudo", [
       "systemctl",
       "is-active",
       unitName(),
     ]);
-    lazymcState = stdout.trim();
+    unitState = stdout.trim();
   } catch (err: unknown) {
     const e = err as { stdout?: string };
-    lazymcState = e.stdout?.trim() ?? "inactive";
+    unitState = e.stdout?.trim() ?? "inactive";
   }
 
-  if (lazymcState === "failed") return "error";
-  if (lazymcState === "activating") return "starting";
-  if (lazymcState === "deactivating") return "stopping";
-  if (lazymcState !== "active") return "idle";
+  if (unitState === "failed") return "error";
+  if (unitState === "activating") return "starting";
+  if (unitState === "deactivating") return "stopping";
+  if (unitState !== "active") return "idle";
 
   const paperAlive = await probePort(PAPER_HOST, PAPER_PORT);
-  return paperAlive ? "up" : "idle";
+  return paperAlive ? "up" : "starting";
 }

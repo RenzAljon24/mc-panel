@@ -2,8 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { sendConsoleCommand } from "../actions";
 
@@ -49,18 +47,27 @@ export function ConsoleInput({ serverId, disabled }: { serverId: string; disable
   }
 
   return (
-    <form onSubmit={submit} className="flex gap-2">
-      <Input
-        value={cmd}
-        placeholder="e.g. say hello · list · whitelist add Steve"
-        onChange={(e) => setCmd(e.target.value)}
-        onKeyDown={onKey}
-        disabled={disabled || pending}
-        className="font-mono"
-      />
-      <Button type="submit" disabled={disabled || pending || !cmd.trim()}>
-        {pending ? "Sending…" : "Send"}
-      </Button>
+    <form onSubmit={submit} className="space-y-3">
+      <p className="minecraft-block text-xs font-black text-foreground uppercase tracking-widest">
+        Command Input
+      </p>
+      <div className="flex gap-2">
+        <input
+          value={cmd}
+          placeholder="e.g. say hello · list · whitelist add Steve"
+          onChange={(e) => setCmd(e.target.value)}
+          onKeyDown={onKey}
+          disabled={disabled || pending}
+          className="flex-1 border-2 border-border bg-[#0a0a0a] px-4 py-2 font-mono text-sm text-foreground placeholder-muted-foreground disabled:opacity-50 focus:outline-none focus:border-primary"
+        />
+        <button
+          type="submit"
+          disabled={disabled || pending || !cmd.trim()}
+          className="minecraft-block px-6 py-2 border-2 border-border bg-primary text-primary-foreground uppercase text-xs font-black disabled:opacity-50"
+        >
+          {pending ? "..." : "SEND"}
+        </button>
+      </div>
     </form>
   );
 }

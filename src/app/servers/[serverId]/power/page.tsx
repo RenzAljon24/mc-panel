@@ -21,15 +21,14 @@ export default async function PowerPage({
   const status = await getStatus(server.id);
 
   return (
-    <div className="border border-border">
-      <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-        <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Power</h2>
+    <div className="border-2 border-border bg-card">
+      <div className="px-6 py-4 border-b-2 border-border bg-primary flex items-center justify-between">
+        <h2 className="minecraft-title text-sm text-primary-foreground tracking-wider">POWER</h2>
         <StatusPill status={status} />
       </div>
-      <div className="p-5 space-y-4">
-        <p className="text-sm text-muted-foreground">
-          With lazymc running, the server boots automatically when a player joins. These controls are
-          for manual override.
+      <div className="p-6 space-y-6">
+        <p className="font-mono text-sm text-muted-foreground leading-relaxed">
+          Server runs 24/7 under systemd. Use these controls to restart after config changes or stop for maintenance.
         </p>
         <PowerButtons serverId={server.id} status={status} />
       </div>
@@ -38,18 +37,20 @@ export default async function PowerPage({
 }
 
 function StatusPill({ status }: { status: string }) {
-  const dot =
-    status === "up"
-      ? "bg-green-500"
-      : status === "starting" || status === "stopping"
-      ? "bg-yellow-400"
-      : status === "error"
-      ? "bg-red-500"
-      : "bg-gray-300";
+  const statusConfig = {
+    up: { dot: "bg-[#22cc22]", label: "ONLINE", border: "border-[#22cc22]", bg: "bg-[#001100]", text: "text-[#22cc22]" },
+    starting: { dot: "bg-[#ffdd00]", label: "STARTING", border: "border-[#ffdd00]", bg: "bg-[#1a1a00]", text: "text-[#ffdd00]" },
+    stopping: { dot: "bg-[#ff9900]", label: "STOPPING", border: "border-[#ff9900]", bg: "bg-[#1a0a00]", text: "text-[#ff9900]" },
+    error: { dot: "bg-[#ff3333]", label: "ERROR", border: "border-[#ff3333]", bg: "bg-[#1a0000]", text: "text-[#ff3333]" },
+    idle: { dot: "bg-[#666666]", label: "OFFLINE", border: "border-[#666666]", bg: "bg-[#0a0a0a]", text: "text-[#666666]" },
+  };
+
+  const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.idle;
+
   return (
-    <div className="flex items-center gap-1.5 rounded border border-border px-2 py-0.5 text-xs font-mono text-muted-foreground">
-      <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-      {status}
+    <div className={`minecraft-block flex items-center gap-2 border-2 ${config.border} ${config.bg} ${config.text} px-4 py-2 text-xs font-black uppercase tracking-wide`}>
+      <span className={`h-2 w-2 ${config.dot}`} />
+      {config.label}
     </div>
   );
 }

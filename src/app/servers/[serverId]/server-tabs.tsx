@@ -9,6 +9,7 @@ const TABS = [
   { href: "/console", label: "Console" },
   { href: "/power", label: "Power" },
   { href: "/players", label: "Players" },
+  { href: "/map", label: "Map" },
   { href: "/settings", label: "Settings" },
   { href: "/plugins", label: "Plugins" },
   { href: "/files", label: "Files" },
