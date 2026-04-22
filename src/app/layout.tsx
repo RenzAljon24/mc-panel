@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MC Panel",
-  description: "Self-hosted Minecraft server control panel",
+  title: "CoreCraft",
+  description: "Minecraft server control panel",
 };
 
 export default function RootLayout({
