@@ -155,6 +155,7 @@ export const ServerScalarFieldEnum = {
   viewDistance: 'viewDistance',
   whitelist: 'whitelist',
   status: 'status',
+  restartRequired: 'restartRequired',
   hostNodeId: 'hostNodeId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -170,6 +171,7 @@ export const PluginScalarFieldEnum = {
   name: 'name',
   source: 'source',
   version: 'version',
+  filename: 'filename',
   enabled: 'enabled',
   createdAt: 'createdAt'
 } as const

@@ -13,7 +13,10 @@
       "Bash(git push *)",
       "Bash(git *)",
       "WebFetch(domain:skills.sh)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npx prisma *)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(npx next *)"
     ]
   }
 }

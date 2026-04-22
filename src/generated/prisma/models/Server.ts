@@ -69,6 +69,7 @@ export type ServerMinAggregateOutputType = {
   viewDistance: number | null
   whitelist: boolean | null
   status: string | null
+  restartRequired: boolean | null
   hostNodeId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -95,6 +96,7 @@ export type ServerMaxAggregateOutputType = {
   viewDistance: number | null
   whitelist: boolean | null
   status: string | null
+  restartRequired: boolean | null
   hostNodeId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -121,6 +123,7 @@ export type ServerCountAggregateOutputType = {
   viewDistance: number
   whitelist: number
   status: number
+  restartRequired: number
   hostNodeId: number
   createdAt: number
   updatedAt: number
@@ -171,6 +174,7 @@ export type ServerMinAggregateInputType = {
   viewDistance?: true
   whitelist?: true
   status?: true
+  restartRequired?: true
   hostNodeId?: true
   createdAt?: true
   updatedAt?: true
@@ -197,6 +201,7 @@ export type ServerMaxAggregateInputType = {
   viewDistance?: true
   whitelist?: true
   status?: true
+  restartRequired?: true
   hostNodeId?: true
   createdAt?: true
   updatedAt?: true
@@ -223,6 +228,7 @@ export type ServerCountAggregateInputType = {
   viewDistance?: true
   whitelist?: true
   status?: true
+  restartRequired?: true
   hostNodeId?: true
   createdAt?: true
   updatedAt?: true
@@ -336,6 +342,7 @@ export type ServerGroupByOutputType = {
   viewDistance: number
   whitelist: boolean
   status: string
+  restartRequired: boolean
   hostNodeId: string | null
   createdAt: Date
   updatedAt: Date
@@ -385,6 +392,7 @@ export type ServerWhereInput = {
   viewDistance?: Prisma.IntFilter<"Server"> | number
   whitelist?: Prisma.BoolFilter<"Server"> | boolean
   status?: Prisma.StringFilter<"Server"> | string
+  restartRequired?: Prisma.BoolFilter<"Server"> | boolean
   hostNodeId?: Prisma.StringNullableFilter<"Server"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Server"> | Date | string
@@ -416,6 +424,7 @@ export type ServerOrderByWithRelationInput = {
   viewDistance?: Prisma.SortOrder
   whitelist?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  restartRequired?: Prisma.SortOrder
   hostNodeId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -450,6 +459,7 @@ export type ServerWhereUniqueInput = Prisma.AtLeast<{
   viewDistance?: Prisma.IntFilter<"Server"> | number
   whitelist?: Prisma.BoolFilter<"Server"> | boolean
   status?: Prisma.StringFilter<"Server"> | string
+  restartRequired?: Prisma.BoolFilter<"Server"> | boolean
   hostNodeId?: Prisma.StringNullableFilter<"Server"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Server"> | Date | string
@@ -481,6 +491,7 @@ export type ServerOrderByWithAggregationInput = {
   viewDistance?: Prisma.SortOrder
   whitelist?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  restartRequired?: Prisma.SortOrder
   hostNodeId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -515,6 +526,7 @@ export type ServerScalarWhereWithAggregatesInput = {
   viewDistance?: Prisma.IntWithAggregatesFilter<"Server"> | number
   whitelist?: Prisma.BoolWithAggregatesFilter<"Server"> | boolean
   status?: Prisma.StringWithAggregatesFilter<"Server"> | string
+  restartRequired?: Prisma.BoolWithAggregatesFilter<"Server"> | boolean
   hostNodeId?: Prisma.StringNullableWithAggregatesFilter<"Server"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Server"> | Date | string
@@ -540,6 +552,7 @@ export type ServerCreateInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -571,6 +584,7 @@ export type ServerUncheckedCreateInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -600,6 +614,7 @@ export type ServerUpdateInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -631,6 +646,7 @@ export type ServerUncheckedUpdateInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -661,6 +677,7 @@ export type ServerCreateManyInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -686,6 +703,7 @@ export type ServerUpdateManyMutationInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -712,6 +730,7 @@ export type ServerUncheckedUpdateManyInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -748,6 +767,7 @@ export type ServerCountOrderByAggregateInput = {
   viewDistance?: Prisma.SortOrder
   whitelist?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  restartRequired?: Prisma.SortOrder
   hostNodeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -785,6 +805,7 @@ export type ServerMaxOrderByAggregateInput = {
   viewDistance?: Prisma.SortOrder
   whitelist?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  restartRequired?: Prisma.SortOrder
   hostNodeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -811,6 +832,7 @@ export type ServerMinOrderByAggregateInput = {
   viewDistance?: Prisma.SortOrder
   whitelist?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  restartRequired?: Prisma.SortOrder
   hostNodeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -973,6 +995,7 @@ export type ServerCreateWithoutOwnerInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1002,6 +1025,7 @@ export type ServerUncheckedCreateWithoutOwnerInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1060,6 +1084,7 @@ export type ServerScalarWhereInput = {
   viewDistance?: Prisma.IntFilter<"Server"> | number
   whitelist?: Prisma.BoolFilter<"Server"> | boolean
   status?: Prisma.StringFilter<"Server"> | string
+  restartRequired?: Prisma.BoolFilter<"Server"> | boolean
   hostNodeId?: Prisma.StringNullableFilter<"Server"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Server"> | Date | string
@@ -1085,6 +1110,7 @@ export type ServerCreateWithoutPluginsInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1115,6 +1141,7 @@ export type ServerUncheckedCreateWithoutPluginsInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1159,6 +1186,7 @@ export type ServerUpdateWithoutPluginsInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1189,6 +1217,7 @@ export type ServerUncheckedUpdateWithoutPluginsInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1217,6 +1246,7 @@ export type ServerCreateWithoutFilesInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1247,6 +1277,7 @@ export type ServerUncheckedCreateWithoutFilesInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1291,6 +1322,7 @@ export type ServerUpdateWithoutFilesInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1321,6 +1353,7 @@ export type ServerUncheckedUpdateWithoutFilesInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1349,6 +1382,7 @@ export type ServerCreateWithoutBackupsInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1379,6 +1413,7 @@ export type ServerUncheckedCreateWithoutBackupsInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1423,6 +1458,7 @@ export type ServerUpdateWithoutBackupsInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1453,6 +1489,7 @@ export type ServerUncheckedUpdateWithoutBackupsInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1481,6 +1518,7 @@ export type ServerCreateWithoutEventsInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1511,6 +1549,7 @@ export type ServerUncheckedCreateWithoutEventsInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1555,6 +1594,7 @@ export type ServerUpdateWithoutEventsInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1585,6 +1625,7 @@ export type ServerUncheckedUpdateWithoutEventsInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1613,6 +1654,7 @@ export type ServerCreateManyOwnerInput = {
   viewDistance?: number
   whitelist?: boolean
   status?: string
+  restartRequired?: boolean
   hostNodeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1638,6 +1680,7 @@ export type ServerUpdateWithoutOwnerInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1667,6 +1710,7 @@ export type ServerUncheckedUpdateWithoutOwnerInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1696,6 +1740,7 @@ export type ServerUncheckedUpdateManyWithoutOwnerInput = {
   viewDistance?: Prisma.IntFieldUpdateOperationsInput | number
   whitelist?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  restartRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hostNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1780,6 +1825,7 @@ export type ServerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   viewDistance?: boolean
   whitelist?: boolean
   status?: boolean
+  restartRequired?: boolean
   hostNodeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1812,6 +1858,7 @@ export type ServerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   viewDistance?: boolean
   whitelist?: boolean
   status?: boolean
+  restartRequired?: boolean
   hostNodeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1839,6 +1886,7 @@ export type ServerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   viewDistance?: boolean
   whitelist?: boolean
   status?: boolean
+  restartRequired?: boolean
   hostNodeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1866,12 +1914,13 @@ export type ServerSelectScalar = {
   viewDistance?: boolean
   whitelist?: boolean
   status?: boolean
+  restartRequired?: boolean
   hostNodeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "name" | "jarType" | "jarVersion" | "paperBuild" | "ramMb" | "portJava" | "portBedrock" | "portRcon" | "rconPassword" | "idleTimeoutSec" | "onlineMode" | "motd" | "difficulty" | "gamemode" | "maxPlayers" | "viewDistance" | "whitelist" | "status" | "hostNodeId" | "createdAt" | "updatedAt", ExtArgs["result"]["server"]>
+export type ServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "name" | "jarType" | "jarVersion" | "paperBuild" | "ramMb" | "portJava" | "portBedrock" | "portRcon" | "rconPassword" | "idleTimeoutSec" | "onlineMode" | "motd" | "difficulty" | "gamemode" | "maxPlayers" | "viewDistance" | "whitelist" | "status" | "restartRequired" | "hostNodeId" | "createdAt" | "updatedAt", ExtArgs["result"]["server"]>
 export type ServerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   plugins?: boolean | Prisma.Server$pluginsArgs<ExtArgs>
@@ -1917,6 +1966,7 @@ export type $ServerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     viewDistance: number
     whitelist: boolean
     status: string
+    restartRequired: boolean
     hostNodeId: string | null
     createdAt: Date
     updatedAt: Date
@@ -2368,6 +2418,7 @@ export interface ServerFieldRefs {
   readonly viewDistance: Prisma.FieldRef<"Server", 'Int'>
   readonly whitelist: Prisma.FieldRef<"Server", 'Boolean'>
   readonly status: Prisma.FieldRef<"Server", 'String'>
+  readonly restartRequired: Prisma.FieldRef<"Server", 'Boolean'>
   readonly hostNodeId: Prisma.FieldRef<"Server", 'String'>
   readonly createdAt: Prisma.FieldRef<"Server", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Server", 'DateTime'>

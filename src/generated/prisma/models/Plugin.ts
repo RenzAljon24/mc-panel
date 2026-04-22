@@ -31,6 +31,7 @@ export type PluginMinAggregateOutputType = {
   name: string | null
   source: string | null
   version: string | null
+  filename: string | null
   enabled: boolean | null
   createdAt: Date | null
 }
@@ -42,6 +43,7 @@ export type PluginMaxAggregateOutputType = {
   name: string | null
   source: string | null
   version: string | null
+  filename: string | null
   enabled: boolean | null
   createdAt: Date | null
 }
@@ -53,6 +55,7 @@ export type PluginCountAggregateOutputType = {
   name: number
   source: number
   version: number
+  filename: number
   enabled: number
   createdAt: number
   _all: number
@@ -66,6 +69,7 @@ export type PluginMinAggregateInputType = {
   name?: true
   source?: true
   version?: true
+  filename?: true
   enabled?: true
   createdAt?: true
 }
@@ -77,6 +81,7 @@ export type PluginMaxAggregateInputType = {
   name?: true
   source?: true
   version?: true
+  filename?: true
   enabled?: true
   createdAt?: true
 }
@@ -88,6 +93,7 @@ export type PluginCountAggregateInputType = {
   name?: true
   source?: true
   version?: true
+  filename?: true
   enabled?: true
   createdAt?: true
   _all?: true
@@ -172,6 +178,7 @@ export type PluginGroupByOutputType = {
   name: string
   source: string
   version: string
+  filename: string | null
   enabled: boolean
   createdAt: Date
   _count: PluginCountAggregateOutputType | null
@@ -204,6 +211,7 @@ export type PluginWhereInput = {
   name?: Prisma.StringFilter<"Plugin"> | string
   source?: Prisma.StringFilter<"Plugin"> | string
   version?: Prisma.StringFilter<"Plugin"> | string
+  filename?: Prisma.StringNullableFilter<"Plugin"> | string | null
   enabled?: Prisma.BoolFilter<"Plugin"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Plugin"> | Date | string
   server?: Prisma.XOR<Prisma.ServerScalarRelationFilter, Prisma.ServerWhereInput>
@@ -216,6 +224,7 @@ export type PluginOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   source?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  filename?: Prisma.SortOrderInput | Prisma.SortOrder
   enabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   server?: Prisma.ServerOrderByWithRelationInput
@@ -232,6 +241,7 @@ export type PluginWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Plugin"> | string
   source?: Prisma.StringFilter<"Plugin"> | string
   version?: Prisma.StringFilter<"Plugin"> | string
+  filename?: Prisma.StringNullableFilter<"Plugin"> | string | null
   enabled?: Prisma.BoolFilter<"Plugin"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Plugin"> | Date | string
   server?: Prisma.XOR<Prisma.ServerScalarRelationFilter, Prisma.ServerWhereInput>
@@ -244,6 +254,7 @@ export type PluginOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   source?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  filename?: Prisma.SortOrderInput | Prisma.SortOrder
   enabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PluginCountOrderByAggregateInput
@@ -261,6 +272,7 @@ export type PluginScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Plugin"> | string
   source?: Prisma.StringWithAggregatesFilter<"Plugin"> | string
   version?: Prisma.StringWithAggregatesFilter<"Plugin"> | string
+  filename?: Prisma.StringNullableWithAggregatesFilter<"Plugin"> | string | null
   enabled?: Prisma.BoolWithAggregatesFilter<"Plugin"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Plugin"> | Date | string
 }
@@ -271,6 +283,7 @@ export type PluginCreateInput = {
   name: string
   source: string
   version: string
+  filename?: string | null
   enabled?: boolean
   createdAt?: Date | string
   server: Prisma.ServerCreateNestedOneWithoutPluginsInput
@@ -283,6 +296,7 @@ export type PluginUncheckedCreateInput = {
   name: string
   source: string
   version: string
+  filename?: string | null
   enabled?: boolean
   createdAt?: Date | string
 }
@@ -293,6 +307,7 @@ export type PluginUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.StringFieldUpdateOperationsInput | string
+  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   server?: Prisma.ServerUpdateOneRequiredWithoutPluginsNestedInput
@@ -305,6 +320,7 @@ export type PluginUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.StringFieldUpdateOperationsInput | string
+  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -316,6 +332,7 @@ export type PluginCreateManyInput = {
   name: string
   source: string
   version: string
+  filename?: string | null
   enabled?: boolean
   createdAt?: Date | string
 }
@@ -326,6 +343,7 @@ export type PluginUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.StringFieldUpdateOperationsInput | string
+  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -337,6 +355,7 @@ export type PluginUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.StringFieldUpdateOperationsInput | string
+  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -363,6 +382,7 @@ export type PluginCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   source?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  filename?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -374,6 +394,7 @@ export type PluginMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   source?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  filename?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -385,6 +406,7 @@ export type PluginMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   source?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  filename?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -437,6 +459,7 @@ export type PluginCreateWithoutServerInput = {
   name: string
   source: string
   version: string
+  filename?: string | null
   enabled?: boolean
   createdAt?: Date | string
 }
@@ -447,6 +470,7 @@ export type PluginUncheckedCreateWithoutServerInput = {
   name: string
   source: string
   version: string
+  filename?: string | null
   enabled?: boolean
   createdAt?: Date | string
 }
@@ -486,6 +510,7 @@ export type PluginScalarWhereInput = {
   name?: Prisma.StringFilter<"Plugin"> | string
   source?: Prisma.StringFilter<"Plugin"> | string
   version?: Prisma.StringFilter<"Plugin"> | string
+  filename?: Prisma.StringNullableFilter<"Plugin"> | string | null
   enabled?: Prisma.BoolFilter<"Plugin"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Plugin"> | Date | string
 }
@@ -496,6 +521,7 @@ export type PluginCreateManyServerInput = {
   name: string
   source: string
   version: string
+  filename?: string | null
   enabled?: boolean
   createdAt?: Date | string
 }
@@ -506,6 +532,7 @@ export type PluginUpdateWithoutServerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.StringFieldUpdateOperationsInput | string
+  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -516,6 +543,7 @@ export type PluginUncheckedUpdateWithoutServerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.StringFieldUpdateOperationsInput | string
+  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -526,6 +554,7 @@ export type PluginUncheckedUpdateManyWithoutServerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.StringFieldUpdateOperationsInput | string
+  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -539,6 +568,7 @@ export type PluginSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name?: boolean
   source?: boolean
   version?: boolean
+  filename?: boolean
   enabled?: boolean
   createdAt?: boolean
   server?: boolean | Prisma.ServerDefaultArgs<ExtArgs>
@@ -551,6 +581,7 @@ export type PluginSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   name?: boolean
   source?: boolean
   version?: boolean
+  filename?: boolean
   enabled?: boolean
   createdAt?: boolean
   server?: boolean | Prisma.ServerDefaultArgs<ExtArgs>
@@ -563,6 +594,7 @@ export type PluginSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   name?: boolean
   source?: boolean
   version?: boolean
+  filename?: boolean
   enabled?: boolean
   createdAt?: boolean
   server?: boolean | Prisma.ServerDefaultArgs<ExtArgs>
@@ -575,11 +607,12 @@ export type PluginSelectScalar = {
   name?: boolean
   source?: boolean
   version?: boolean
+  filename?: boolean
   enabled?: boolean
   createdAt?: boolean
 }
 
-export type PluginOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "serverId" | "slug" | "name" | "source" | "version" | "enabled" | "createdAt", ExtArgs["result"]["plugin"]>
+export type PluginOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "serverId" | "slug" | "name" | "source" | "version" | "filename" | "enabled" | "createdAt", ExtArgs["result"]["plugin"]>
 export type PluginInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   server?: boolean | Prisma.ServerDefaultArgs<ExtArgs>
 }
@@ -602,6 +635,7 @@ export type $PluginPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     name: string
     source: string
     version: string
+    filename: string | null
     enabled: boolean
     createdAt: Date
   }, ExtArgs["result"]["plugin"]>
@@ -1034,6 +1068,7 @@ export interface PluginFieldRefs {
   readonly name: Prisma.FieldRef<"Plugin", 'String'>
   readonly source: Prisma.FieldRef<"Plugin", 'String'>
   readonly version: Prisma.FieldRef<"Plugin", 'String'>
+  readonly filename: Prisma.FieldRef<"Plugin", 'String'>
   readonly enabled: Prisma.FieldRef<"Plugin", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Plugin", 'DateTime'>
 }
