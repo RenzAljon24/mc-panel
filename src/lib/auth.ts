@@ -18,5 +18,8 @@ export const auth = betterAuth({
       role: { type: "string", required: false, defaultValue: "owner" },
     },
   },
-  trustedOrigins: [process.env.NEXT_PUBLIC_APP_URL!],
+  trustedOrigins: (process.env.NEXT_PUBLIC_APP_URL ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
 });

@@ -4,7 +4,7 @@
  */
 
 export const SERVER_TAGLINE =
-  "Cross-play survival, no whitelist, no pay-to-win. Java & Bedrock welcome.";
+  "Cross-play survival";
 
 /** Set to your Discord invite URL, e.g. "https://discord.gg/XXXXXXX" */
 export const DISCORD_URL: string | null = null;

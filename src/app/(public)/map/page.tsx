@@ -3,7 +3,7 @@ import { PublicMapFrame } from "./public-map-frame";
 
 export const metadata: Metadata = {
   title: "Live Map",
-  description: "Real-time world map powered by Dynmap.",
+  description: "Real-time world map",
 };
 
 export default function PublicMapPage() {
@@ -16,7 +16,7 @@ export default function PublicMapPage() {
         </p>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-[#444]">
           <span className="size-1.5 rounded-full bg-[#4ade80] animate-pulse" />
-          Dynmap
+          Craftverse
         </span>
       </div>
       <PublicMapFrame />

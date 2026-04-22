@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 
-const DYNMAP_PORT = Number(process.env.NEXT_PUBLIC_DYNMAP_PORT ?? 8123);
+const DYNMAP_URL = process.env.NEXT_PUBLIC_DYNMAP_URL
 
 export function PublicMapFrame() {
   const [src, setSrc] = useState<string | null>(null);
 
   useEffect(() => {
     setSrc(
-      `${window.location.protocol}//${window.location.hostname}:${DYNMAP_PORT}/`
+      `${DYNMAP_URL}`
     );
   }, []);
 
