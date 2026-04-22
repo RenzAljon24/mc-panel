@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { searchPlugins } from "@/lib/modrinth";
+import { InstallButton, UninstallButton, RestartBanner } from "./plugin-actions";
 
 export default async function PluginsPage({
   params,
@@ -21,10 +22,13 @@ export default async function PluginsPage({
   });
   if (!server) notFound();
 
+  const installedSlugs = new Set(server.plugins.map((p) => p.slug));
   const hits = q && q.length > 1 ? await searchPlugins(q, server.jarVersion).catch(() => []) : [];
 
   return (
     <div className="space-y-4">
+      {server.restartRequired && <RestartBanner serverId={server.id} />}
+
       {/* Installed plugins */}
       <div className="border border-border">
         <div className="px-5 py-3 border-b border-border">
@@ -45,13 +49,16 @@ export default async function PluginsPage({
                     <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
                       {p.version}
                     </span>
+                    <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
+                      {p.source}
+                    </span>
                     {!p.enabled && (
                       <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
                         disabled
                       </span>
                     )}
                   </div>
-                  <span className="text-xs text-muted-foreground font-mono">{p.source}</span>
+                  <UninstallButton serverId={server.id} pluginId={p.id} />
                 </li>
               ))}
             </ul>
@@ -88,27 +95,29 @@ export default async function PluginsPage({
             </p>
           ) : (
             <ul className="divide-y divide-border">
-              {hits.map((h) => (
-                <li key={h.project_id} className="flex items-start justify-between gap-4 py-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-foreground">{h.title}</div>
-                    <div className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{h.description}</div>
-                    <div className="mt-1 flex gap-2 text-[10px] text-muted-foreground font-mono">
-                      <span>{h.downloads.toLocaleString()} downloads</span>
-                      <span>·</span>
-                      <span>latest: {h.latest_version}</span>
+              {hits.map((h) => {
+                const installed = installedSlugs.has(h.slug);
+                return (
+                  <li key={h.project_id} className="flex items-start justify-between gap-4 py-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-foreground">{h.title}</div>
+                      <div className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{h.description}</div>
+                      <div className="mt-1 flex gap-2 text-[10px] text-muted-foreground font-mono">
+                        <span>{h.downloads.toLocaleString()} downloads</span>
+                        <span>·</span>
+                        <span>latest: {h.latest_version}</span>
+                      </div>
                     </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="border border-border px-3 py-1 text-xs font-mono opacity-50 cursor-not-allowed"
-                    disabled
-                    title="Install wired up in Phase 6 (needs VPS filesystem)"
-                  >
-                    Install
-                  </button>
-                </li>
-              ))}
+                    {installed ? (
+                      <span className="border-2 border-border px-3 py-1 text-xs font-mono text-muted-foreground uppercase">
+                        Installed
+                      </span>
+                    ) : (
+                      <InstallButton serverId={server.id} slug={h.slug} />
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

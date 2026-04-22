@@ -8,6 +8,7 @@ import * as systemd from "@/lib/systemd";
 import { runCommand, type RconTarget } from "@/lib/rcon";
 import { appendMockLine } from "@/lib/logs";
 import { writeTextFile } from "@/lib/files";
+import * as pluginsLib from "@/lib/plugins";
 
 async function requireSession() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -56,10 +57,43 @@ export async function stopServer(serverId: string) {
 export async function restartServer(serverId: string) {
   const { server, session } = await loadServer(serverId);
   await systemd.restart(server.id);
+  await prisma.server.update({
+    where: { id: server.id },
+    data: { restartRequired: false },
+  });
   await prisma.auditEvent.create({
     data: { serverId: server.id, userId: session.user.id, kind: "server.restart" },
   });
   revalidatePath(`/servers/${serverId}`);
+}
+
+export async function installPlugin(serverId: string, slug: string): Promise<string> {
+  const { server, session } = await loadServer(serverId);
+  const result = await pluginsLib.installPluginFromModrinth(server.id, slug);
+  await prisma.auditEvent.create({
+    data: {
+      serverId: server.id,
+      userId: session.user.id,
+      kind: "plugin.install",
+      payloadJson: JSON.stringify({ slug, version: result.version }),
+    },
+  });
+  revalidatePath(`/servers/${serverId}/plugins`);
+  return `Installed ${result.name} ${result.version}`;
+}
+
+export async function uninstallPlugin(serverId: string, pluginId: string): Promise<void> {
+  const { server, session } = await loadServer(serverId);
+  await pluginsLib.uninstallPlugin(server.id, pluginId);
+  await prisma.auditEvent.create({
+    data: {
+      serverId: server.id,
+      userId: session.user.id,
+      kind: "plugin.uninstall",
+      payloadJson: JSON.stringify({ pluginId }),
+    },
+  });
+  revalidatePath(`/servers/${serverId}/plugins`);
 }
 
 export async function broadcast(serverId: string, message: string) {
