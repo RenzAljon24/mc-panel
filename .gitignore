@@ -41,3 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 /prisma/src/generated/prisma
+.claude/worktrees/agent-a1806417
