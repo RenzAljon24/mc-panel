@@ -21,7 +21,7 @@ export default async function PublicLayout({
             className="flex items-center gap-2 font-mono text-sm font-bold tracking-widest text-[#4ade80] hover:text-[#86efac] transition-colors"
           >
             <span className="minecraft-title text-xs leading-none">⛏</span>
-            <span className="hidden sm:inline">{serverName.toUpperCase()}</span>
+            <span className="hidden sm:inline">CoreCraft</span>
             <span className="sm:hidden">MC</span>
           </Link>
 
@@ -37,7 +37,7 @@ export default async function PublicLayout({
       <footer className="border-t border-[#1e1e1e] bg-[#0a0a0a] py-8 mt-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#555] font-mono">
-            <span>© {new Date().getFullYear()} {serverName}. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} CoreCraft. All rights reserved.</span>
             <div className="flex items-center gap-6">
               <a
                 href="https://discord.gg/"
@@ -49,7 +49,6 @@ export default async function PublicLayout({
                 Discord
               </a>
               <span className="text-[#333]">·</span>
-              <span className="text-[#333]">Powered by mc-panel</span>
             </div>
           </div>
         </div>

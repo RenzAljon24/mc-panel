@@ -44,26 +44,30 @@ export default async function ServerLayout({
   return (
     <div className="space-y-0">
       {/* Server header */}
-      <div className="border-b border-border pb-5 mb-0">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-1">
+      <div className="border-b border-border pb-4 sm:pb-5 mb-0">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
               <Link href="/servers" className="hover:text-foreground transition-colors">
                 servers
               </Link>
               <span>/</span>
-              <span className="text-foreground">{server.name}</span>
+              <span className="text-foreground truncate">{server.name}</span>
             </div>
-            <h1 className="text-xl font-semibold text-foreground">{server.name}</h1>
-            <p className="text-xs text-muted-foreground font-mono">
+            <h1 className="text-lg sm:text-xl font-semibold text-foreground truncate">
+              {server.name}
+            </h1>
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-mono wrap-break-word">
               {server.jarType} {server.jarVersion} · Java :{server.portJava} · Bedrock :{server.portBedrock}
             </p>
           </div>
-          <StatusPill status={status} />
+          <div className="sm:shrink-0">
+            <StatusPill status={status} />
+          </div>
         </div>
       </div>
       <ServerTabs serverId={server.id} />
-      <div className="pt-6">{children}</div>
+      <div className="pt-4 sm:pt-6">{children}</div>
     </div>
   );
 }

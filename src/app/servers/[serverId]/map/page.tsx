@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { Map as MapIcon } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStatus } from "@/lib/systemd";
@@ -22,19 +23,29 @@ export default async function MapPage({
   const dynmapPort = Number(process.env.DYNMAP_PORT ?? 8123);
 
   return (
-    <div className="border-2 border-border bg-card">
-      <div className="px-6 py-4 border-b-2 border-border bg-primary">
-        <h2 className="minecraft-title text-sm text-primary-foreground tracking-wider">MAP</h2>
-      </div>
-      <div className="p-0">
-        {status === "up" ? (
-          <MapFrame port={dynmapPort} />
-        ) : (
-          <p className="font-mono text-sm text-muted-foreground p-6">
-            Server is {status}. Start it to view the live map.
+    <section className="border border-border bg-card overflow-hidden">
+      <header className="flex items-center justify-between gap-3 border-b border-border px-4 sm:px-5 py-3">
+        <div className="flex items-center gap-2">
+          <MapIcon className="h-4 w-4 text-muted-foreground" />
+          <h2 className="text-xs font-mono uppercase tracking-widest text-foreground font-semibold">
+            Live Map
+          </h2>
+        </div>
+        <span className="text-[11px] font-mono text-muted-foreground">
+          {status === "up" ? "Live" : `Server ${status}`}
+        </span>
+      </header>
+      {status === "up" ? (
+        <MapFrame port={dynmapPort} />
+      ) : (
+        <div className="px-6 py-12 text-center">
+          <MapIcon className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+          <p className="font-mono text-sm text-foreground">Server is {status}.</p>
+          <p className="font-mono text-xs text-muted-foreground mt-1">
+            Start it to view the live map.
           </p>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </section>
   );
 }

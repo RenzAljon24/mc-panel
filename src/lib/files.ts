@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile, stat, mkdir } from "node:fs/promises";
+import { readdir, readFile, writeFile, stat, mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { MOCK_INFRA } from "./mock";
 
@@ -153,6 +153,62 @@ export async function writeTextFile(
   const target = resolveSafe(serverId, normalized);
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, content, "utf8");
+}
+
+export async function writeBinaryFile(
+  serverId: string,
+  subpath: string,
+  data: Uint8Array,
+): Promise<void> {
+  const normalized = subpath.replace(/^\/+|\/+$/g, "");
+  if (!normalized) throw new Error("Empty path");
+  if (MOCK_INFRA) {
+    mockFs().set(normalized, `<binary ${data.byteLength} bytes>`);
+    // ensure parent dirs exist as dir markers
+    let acc = "";
+    for (const seg of normalized.split("/").slice(0, -1)) {
+      acc = acc ? `${acc}/${seg}` : seg;
+      if (!mockFs().has(acc)) mockFs().set(acc, null);
+    }
+    return;
+  }
+  const target = resolveSafe(serverId, normalized);
+  await mkdir(path.dirname(target), { recursive: true });
+  await writeFile(target, data);
+}
+
+export async function makeDir(serverId: string, subpath: string): Promise<void> {
+  const normalized = subpath.replace(/^\/+|\/+$/g, "");
+  if (!normalized) throw new Error("Empty path");
+  if (MOCK_INFRA) {
+    const fs = mockFs();
+    if (fs.has(normalized) && fs.get(normalized) !== null) {
+      throw new Error("A file with that name already exists");
+    }
+    let acc = "";
+    for (const seg of normalized.split("/")) {
+      acc = acc ? `${acc}/${seg}` : seg;
+      if (!fs.has(acc)) fs.set(acc, null);
+    }
+    return;
+  }
+  const target = resolveSafe(serverId, normalized);
+  await mkdir(target, { recursive: true });
+}
+
+export async function deleteNode(serverId: string, subpath: string): Promise<void> {
+  const normalized = subpath.replace(/^\/+|\/+$/g, "");
+  if (!normalized) throw new Error("Refusing to delete server root");
+  if (MOCK_INFRA) {
+    const fs = mockFs();
+    const prefix = `${normalized}/`;
+    for (const key of [...fs.keys()]) {
+      if (key === normalized || key.startsWith(prefix)) fs.delete(key);
+    }
+    return;
+  }
+  const target = resolveSafe(serverId, normalized);
+  await rm(target, { recursive: true, force: true });
 }
 
 export function parentPath(subpath: string): string {

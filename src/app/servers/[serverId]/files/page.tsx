@@ -5,14 +5,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getNodeKind, listDir, parentPath, readTextFile } from "@/lib/files";
 import { FileEditor } from "./file-editor";
-
-function formatBytes(n?: number): string {
-  if (n == null) return "";
-  if (n < 1024) return `${n} B`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
-  if (n < 1024 * 1024 * 1024) return `${(n / 1024 / 1024).toFixed(1)} MB`;
-  return `${(n / 1024 / 1024 / 1024).toFixed(2)} GB`;
-}
+import { FilesBrowser } from "./files-browser";
 
 export default async function FilesPage({
   params,
@@ -84,44 +77,13 @@ export default async function FilesPage({
       <div className="px-5 py-3 border-b border-border">
         <Breadcrumbs base={base} crumbs={crumbs} />
       </div>
-      <div>
-        {entries.length === 0 ? (
-          <p className="px-5 py-4 text-sm text-muted-foreground">Empty directory.</p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {current && (
-              <li className="px-5 py-2.5">
-                <Link
-                  href={`${base}?path=${encodeURIComponent(parentPath(current))}`}
-                  className="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  ../
-                </Link>
-              </li>
-            )}
-            {entries.map((e) => (
-              <li key={e.path} className="flex items-center justify-between px-5 py-2.5 hover:bg-accent transition-colors">
-                <Link
-                  href={`${base}?path=${encodeURIComponent(e.path)}`}
-                  className="flex items-center gap-2 text-sm font-mono text-foreground hover:text-primary transition-colors"
-                >
-                  {e.kind === "dir" ? (
-                    <span className="text-muted-foreground">{e.name}/</span>
-                  ) : (
-                    <span>{e.name}</span>
-                  )}
-                  {e.kind === "dir" && (
-                    <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
-                      dir
-                    </span>
-                  )}
-                </Link>
-                <span className="text-xs text-muted-foreground font-mono">{formatBytes(e.sizeBytes)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <FilesBrowser
+        serverId={server.id}
+        current={current}
+        parent={parentPath(current)}
+        entries={entries}
+        base={base}
+      />
     </div>
   );
 }

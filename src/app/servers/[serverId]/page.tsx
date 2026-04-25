@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { Activity, Users, Gauge, AlertTriangle } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStatus } from "@/lib/systemd";
 import { listPlayers } from "@/lib/rcon";
+import { AutoRefresh } from "./auto-refresh";
 
 export default async function DashboardPage({
   params,
@@ -42,125 +44,207 @@ export default async function DashboardPage({
   });
 
   const isOnline = status === "up";
+  const capacityPct = Math.min(
+    100,
+    Math.round((players.length / Math.max(server.maxPlayers, 1)) * 100),
+  );
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-12">
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="border-2 border-foreground p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <h1 className="minecraft-title text-2xl md:text-4xl text-foreground">
-              SERVER
-            </h1>
-            <div className={`w-6 h-6 border-2 border-foreground ${isOnline ? 'bg-green-500' : 'bg-red-500'
-              }`} />
-          </div>
-          <p className="font-mono text-sm text-muted-foreground">
-            {server.name || 'Unnamed Server'}
-          </p>
-        </div>
+    <div className="space-y-4 sm:space-y-6">
+      <AutoRefresh intervalMs={10000} />
 
-        {/* Main Grid */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Players Panel */}
-          <div className="border-2 border-foreground flex flex-col">
-            <div className="bg-foreground text-background px-6 py-4">
-              <h2 className="minecraft-block text-sm md:text-base tracking-widest">
-                PLAYERS
-              </h2>
+      {/* Stat cards */}
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          label="Status"
+          icon={<Activity className="h-4 w-4" />}
+          value={status.toUpperCase()}
+          tone={
+            isOnline
+              ? "good"
+              : status === "starting" || status === "stopping"
+                ? "warn"
+                : status === "error"
+                  ? "bad"
+                  : "muted"
+          }
+        />
+        <StatCard
+          label="Players"
+          icon={<Users className="h-4 w-4" />}
+          value={`${players.length} / ${server.maxPlayers}`}
+          tone={isOnline ? "good" : "muted"}
+        />
+        <StatCard
+          label="Capacity"
+          icon={<Gauge className="h-4 w-4" />}
+          value={`${capacityPct}%`}
+          tone="muted"
+          extra={
+            <div className="mt-2 h-1.5 w-full bg-muted overflow-hidden">
+              <div
+                className="h-full bg-foreground transition-all"
+                style={{ width: `${capacityPct}%` }}
+              />
             </div>
+          }
+        />
+        <StatCard
+          label="Version"
+          icon={<Activity className="h-4 w-4" />}
+          value={`${server.jarType} ${server.jarVersion}`}
+          tone="muted"
+          mono
+        />
+      </div>
 
-            <div className="px-6 py-6 flex-1 space-y-4">
-              <div className="flex items-baseline justify-between">
-                <span className="font-mono text-3xl font-bold text-foreground">
-                  {players.length}
-                </span>
-                <span className="font-mono text-sm text-muted-foreground">
-                  / {server.maxPlayers}
-                </span>
+      {/* Main grid */}
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
+        {/* Players Panel */}
+        <Panel
+          title="Players Online"
+          subtitle={`${players.length} of ${server.maxPlayers}`}
+          className="lg:col-span-2"
+        >
+          {rconError ? (
+            <div className="flex items-start gap-2 border border-red-500/40 bg-red-500/5 p-3">
+              <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+              <div className="text-xs font-mono text-red-500 wrap-break-word">
+                RCON error: {rconError}
               </div>
-
-              <div className="border-t border-border pt-4">
-                {rconError ? (
-                  <p className="text-sm text-[#ff6666] font-mono">
-                    RCON error: {rconError}
-                  </p>
-                ) : players.length === 0 ? (
-                  <p className="text-sm text-muted-foreground font-mono">
-                    {isOnline ? "No players online" : "Server is idle"}
-                  </p>
-                ) : (
-                  <ul className="space-y-3">
-                    {players.map((p) => (
-                      <li
-                        key={p}
-                        className="font-mono text-sm text-foreground pl-4 border-l-2 border-foreground"
-                      >
-                        {p}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
             </div>
-          </div>
+          ) : !isOnline ? (
+            <EmptyState message={`Server is ${status}.`} hint="Start it to see online players." />
+          ) : players.length === 0 ? (
+            <EmptyState message="No players online." hint="Share the IP with friends to get started." />
+          ) : (
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {players.map((p) => (
+                <li
+                  key={p}
+                  className="flex items-center gap-3 border border-border bg-background px-3 py-2"
+                >
+                  <Avatar name={p} />
+                  <span className="font-mono text-sm text-foreground truncate">{p}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
 
-          {/* Activity Panel */}
-          <div className="border-2 border-foreground flex flex-col">
-            <div className="bg-foreground text-background px-6 py-4">
-              <h2 className="minecraft-block text-sm md:text-base tracking-widest">
-                ACTIVITY
-              </h2>
-            </div>
-
-            <div className="px-6 py-6 flex-1 overflow-auto max-h-80">
-              {recentEvents.length === 0 ? (
-                <p className="text-sm text-muted-foreground font-mono">
-                  No recent events.
-                </p>
-              ) : (
-                <ul className="space-y-4">
-                  {recentEvents.map((e, idx) => (
-                    <div key={e.id} className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-foreground" />
-                        <span className="font-mono text-xs font-bold text-foreground">
-                          {e.kind.toUpperCase()}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground font-mono pl-5">
-                        {e.createdAt.toLocaleString()}
-                      </p>
-                      {idx < recentEvents.length - 1 && (
-                        <div className="border-t border-border mt-3" />
-                      )}
+        {/* Activity Panel */}
+        <Panel title="Recent Activity">
+          {recentEvents.length === 0 ? (
+            <EmptyState message="No recent events." />
+          ) : (
+            <ol className="space-y-3 max-h-96 overflow-auto">
+              {recentEvents.map((e) => (
+                <li key={e.id} className="flex items-start gap-3">
+                  <span className="mt-1.5 h-2 w-2 bg-foreground shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-mono text-xs font-bold text-foreground">
+                      {e.kind.toUpperCase()}
                     </div>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Status Bar */}
-        <div className="border-2 border-foreground p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="space-y-2">
-              <p className="font-mono text-xs text-muted-foreground">STATUS</p>
-              <p className={`font-mono text-xl font-bold ${isOnline ? 'text-green-500' : 'text-red-500'
-                }`}>
-                {isOnline ? 'ONLINE' : 'OFFLINE'}
-              </p>
-            </div>
-            <div className="space-y-2">
-              <p className="font-mono text-xs text-muted-foreground">CAPACITY</p>
-              <p className="font-mono text-xl font-bold text-foreground">
-                {Math.round((players.length / server.maxPlayers) * 100)}%
-              </p>
-            </div>
-          </div>
-        </div>
+                    <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
+                      {e.createdAt.toLocaleString()}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </Panel>
       </div>
     </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  icon,
+  tone,
+  extra,
+  mono,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+  tone: "good" | "bad" | "warn" | "muted";
+  extra?: React.ReactNode;
+  mono?: boolean;
+}) {
+  const accent =
+    tone === "good"
+      ? "text-green-600 dark:text-green-400"
+      : tone === "bad"
+        ? "text-red-500"
+        : tone === "warn"
+          ? "text-yellow-500"
+          : "text-foreground";
+  return (
+    <div className="border border-border bg-card p-3 sm:p-4">
+      <div className="flex items-center justify-between text-muted-foreground">
+        <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-widest">
+          {label}
+        </span>
+        <span className={accent}>{icon}</span>
+      </div>
+      <div
+        className={`mt-2 ${mono ? "font-mono text-sm" : "text-lg sm:text-xl font-bold"} ${accent} truncate`}
+      >
+        {value}
+      </div>
+      {extra}
+    </div>
+  );
+}
+
+function Panel({
+  title,
+  subtitle,
+  children,
+  className = "",
+}: {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={`border border-border bg-card flex flex-col ${className}`}>
+      <header className="flex items-center justify-between gap-3 border-b border-border px-4 sm:px-5 py-3">
+        <h2 className="text-xs font-mono uppercase tracking-widest text-foreground font-semibold">
+          {title}
+        </h2>
+        {subtitle && (
+          <span className="text-[11px] font-mono text-muted-foreground">{subtitle}</span>
+        )}
+      </header>
+      <div className="p-4 sm:p-5 flex-1">{children}</div>
+    </section>
+  );
+}
+
+function EmptyState({ message, hint }: { message: string; hint?: string }) {
+  return (
+    <div className="text-center py-6 space-y-1">
+      <p className="text-sm text-muted-foreground font-mono">{message}</p>
+      {hint && <p className="text-xs text-muted-foreground/70">{hint}</p>}
+    </div>
+  );
+}
+
+function Avatar({ name }: { name: string }) {
+  const username = name.startsWith(".") ? name.slice(1) : name;
+  return (
+    <img
+      src={`https://mc-heads.net/avatar/${encodeURIComponent(username)}/24`}
+      alt=""
+      width={24}
+      height={24}
+      className="h-6 w-6 shrink-0 border border-border bg-muted"
+      loading="lazy"
+    />
   );
 }

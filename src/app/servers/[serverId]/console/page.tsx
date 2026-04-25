@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { Terminal } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { tailLog } from "@/lib/logs";
 import { getStatus } from "@/lib/systemd";
 import { ConsoleInput } from "./console-input";
+import { ConsoleView } from "./console-view";
 
 export default async function ConsolePage({
   params,
@@ -20,48 +22,39 @@ export default async function ConsolePage({
   if (!server) notFound();
 
   const [status, lines] = await Promise.all([getStatus(server.id), tailLog(server.id, 200)]);
+  const isOnline = status === "up";
 
   return (
-    <div className="border-2 border-border bg-card">
-      <div className="px-6 py-4 border-b-2 border-border bg-primary">
-        <h2 className="minecraft-title text-sm text-primary-foreground tracking-wider">CONSOLE</h2>
-      </div>
-      <div className="p-6 space-y-6">
-        {/* Log output — dark background, monospace, no rounding, sharp borders */}
-        <div className="space-y-2">
-          <p className="minecraft-block text-xs font-black text-foreground uppercase tracking-widest">Server Output</p>
-          <div className="max-h-[400px] overflow-auto border-2 border-border bg-[#0a0a0a] p-4 font-mono text-xs leading-relaxed text-[#00ff00]">
-            {lines.length === 0 ? (
-              <p className="text-muted-foreground">No log output yet.</p>
-            ) : (
-              lines.map((l, i) => (
-                <div key={i} className="whitespace-pre-wrap break-all">
-                  {l}
-                </div>
-              ))
-            )}
-          </div>
+    <section className="border border-border bg-card">
+      <header className="flex items-center justify-between gap-3 border-b border-border px-4 sm:px-5 py-3">
+        <div className="flex items-center gap-2">
+          <Terminal className="h-4 w-4 text-muted-foreground" />
+          <h2 className="text-xs font-mono uppercase tracking-widest text-foreground font-semibold">
+            Console
+          </h2>
         </div>
-
-        {/* Server status indicator */}
-        <div className="flex items-center gap-3">
-          <div className={`w-3 h-3 border border-foreground ${status === "up" ? "bg-[#00ff00]" : "bg-[#ff0000]"}`} />
-          <span className="font-mono text-sm text-foreground">
-            Status: <span className="minecraft-block">{status.toUpperCase()}</span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`h-2 w-2 rounded-full ${
+              isOnline
+                ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.7)]"
+                : status === "starting" || status === "stopping"
+                  ? "bg-yellow-400 animate-pulse"
+                  : status === "error"
+                    ? "bg-red-500"
+                    : "bg-gray-400"
+            }`}
+          />
+          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+            {status}
           </span>
         </div>
+      </header>
 
-        {/* Console input */}
-        <ConsoleInput serverId={server.id} disabled={status !== "up"} />
-
-        {status !== "up" && (
-          <div className="border-2 border-[#ff4444] bg-[#1a0a0a] p-3">
-            <p className="text-xs font-mono text-[#ff6666]">
-              ⚠ Server is offline. Start it first to send commands.
-            </p>
-          </div>
-        )}
+      <div className="p-4 sm:p-5 space-y-4">
+        <ConsoleView initialLines={lines} />
+        <ConsoleInput serverId={server.id} disabled={!isOnline} />
       </div>
-    </div>
+    </section>
   );
 }

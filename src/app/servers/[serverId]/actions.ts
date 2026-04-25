@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import * as systemd from "@/lib/systemd";
 import { runCommand, type RconTarget } from "@/lib/rcon";
 import { appendMockLine } from "@/lib/logs";
-import { writeTextFile } from "@/lib/files";
+import { writeTextFile, writeBinaryFile, makeDir, deleteNode } from "@/lib/files";
 import * as pluginsLib from "@/lib/plugins";
 
 async function requireSession() {
@@ -182,6 +182,75 @@ export async function saveServerFile(
       userId: session.user.id,
       kind: "file.write",
       payloadJson: JSON.stringify({ path: subpath, bytes: content.length }),
+    },
+  });
+  revalidatePath(`/servers/${serverId}/files`);
+}
+
+function sanitizeName(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) throw new Error("Name is required");
+  if (trimmed.includes("/") || trimmed.includes("\\") || trimmed === "." || trimmed === "..") {
+    throw new Error("Invalid name");
+  }
+  return trimmed;
+}
+
+export async function uploadServerFiles(serverId: string, formData: FormData): Promise<number> {
+  const { server, session } = await loadServer(serverId);
+  const dir = String(formData.get("dir") ?? "").replace(/^\/+|\/+$/g, "");
+  const files = formData.getAll("files").filter((f): f is File => f instanceof File);
+  if (files.length === 0) throw new Error("No files provided");
+
+  let count = 0;
+  for (const file of files) {
+    const name = sanitizeName(file.name);
+    const rel = dir ? `${dir}/${name}` : name;
+    const buf = new Uint8Array(await file.arrayBuffer());
+    await writeBinaryFile(server.id, rel, buf);
+    count += 1;
+  }
+
+  await prisma.auditEvent.create({
+    data: {
+      serverId: server.id,
+      userId: session.user.id,
+      kind: "file.upload",
+      payloadJson: JSON.stringify({ dir, count, names: files.map((f) => f.name) }),
+    },
+  });
+  revalidatePath(`/servers/${serverId}/files`);
+  return count;
+}
+
+export async function createServerFolder(serverId: string, dir: string, name: string): Promise<void> {
+  const { server, session } = await loadServer(serverId);
+  const safe = sanitizeName(name);
+  const cleanDir = dir.replace(/^\/+|\/+$/g, "");
+  const rel = cleanDir ? `${cleanDir}/${safe}` : safe;
+  await makeDir(server.id, rel);
+  await prisma.auditEvent.create({
+    data: {
+      serverId: server.id,
+      userId: session.user.id,
+      kind: "file.mkdir",
+      payloadJson: JSON.stringify({ path: rel }),
+    },
+  });
+  revalidatePath(`/servers/${serverId}/files`);
+}
+
+export async function deleteServerNode(serverId: string, subpath: string): Promise<void> {
+  const { server, session } = await loadServer(serverId);
+  const normalized = subpath.replace(/^\/+|\/+$/g, "");
+  if (!normalized) throw new Error("Refusing to delete server root");
+  await deleteNode(server.id, normalized);
+  await prisma.auditEvent.create({
+    data: {
+      serverId: server.id,
+      userId: session.user.id,
+      kind: "file.delete",
+      payloadJson: JSON.stringify({ path: normalized }),
     },
   });
   revalidatePath(`/servers/${serverId}/files`);

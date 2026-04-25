@@ -4,10 +4,10 @@
  */
 
 export const SERVER_TAGLINE =
-  "Cross-play survival";
+  "Cross-play Survival SMP";
 
 /** Set to your Discord invite URL, e.g. "https://discord.gg/XXXXXXX" */
-export const DISCORD_URL: string | null = null;
+export const DISCORD_URL: string = "https://discord.gg/T85qE53QK";
 
 // ---------------------------------------------------------------------------
 // Server connection info

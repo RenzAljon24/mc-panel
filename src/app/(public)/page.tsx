@@ -36,23 +36,21 @@ function StatusBadge({ status }: { status: string }) {
   const isStarting = status === "starting" || status === "stopping";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold border ${
-        isOnline
-          ? "border-[#4ade80] bg-[#4ade80]/10 text-[#4ade80]"
-          : isStarting
+      className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold border ${isOnline
+        ? "border-[#4ade80] bg-[#4ade80]/10 text-[#4ade80]"
+        : isStarting
           ? "border-[#facc15] bg-[#facc15]/10 text-[#facc15]"
           : "border-[#666] bg-[#666]/10 text-[#666]"
-      }`}
+        }`}
       aria-label={`Server is ${isOnline ? "online" : isStarting ? "starting" : "offline"}`}
     >
       <span
-        className={`size-1.5 rounded-full ${
-          isOnline
-            ? "bg-[#4ade80] animate-pulse"
-            : isStarting
+        className={`size-1.5 rounded-full ${isOnline
+          ? "bg-[#4ade80] animate-pulse"
+          : isStarting
             ? "bg-[#facc15] animate-pulse"
             : "bg-[#666]"
-        }`}
+          }`}
       />
       {isOnline ? "ONLINE" : isStarting ? "STARTING" : "OFFLINE"}
     </span>
@@ -107,9 +105,8 @@ function RoleBadge({ role }: { role: string }) {
   };
   return (
     <span
-      className={`inline-block px-2 py-0.5 text-[10px] font-mono font-bold border ${
-        styles[role] ?? "border-[#555] bg-[#555]/10 text-[#555]"
-      }`}
+      className={`inline-block px-2 py-0.5 text-[10px] font-mono font-bold border ${styles[role] ?? "border-[#555] bg-[#555]/10 text-[#555]"
+        }`}
     >
       {role.toUpperCase()}
     </span>
@@ -153,7 +150,7 @@ export default async function LandingPage() {
             </div>
 
             <h1 className="minecraft-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight text-[#e8e8e8] mb-4">
-              {serverName}
+              CoreCraft
             </h1>
 
             <p className="text-base sm:text-lg text-[#888] font-mono mb-8 leading-relaxed max-w-xl">
@@ -202,8 +199,8 @@ export default async function LandingPage() {
               status === "up"
                 ? "Online"
                 : status === "starting"
-                ? "Starting"
-                : "Offline"
+                  ? "Starting"
+                  : "Offline"
             }
             sub="24/7 uptime target"
           />
