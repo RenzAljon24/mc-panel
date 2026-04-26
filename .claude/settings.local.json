@@ -17,7 +17,8 @@
       "Bash(npx prisma *)",
       "Bash(echo \"EXIT=$?\")",
       "Bash(npx next *)",
-      "Skill(shadcn)"
+      "Skill(shadcn)",
+      "Bash(npx --offline tsc --noEmit -p tsconfig.json)"
     ]
   }
 }

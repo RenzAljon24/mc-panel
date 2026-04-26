@@ -23,18 +23,15 @@ export const auth = betterAuth({
   },
   advanced: enableCrossSubdomain
     ? {
-        crossSubDomainCookies: {
-          enabled: true,
-          domain: `.${BASE_DOMAIN}`,
-        },
-        defaultCookieAttributes: {
-          sameSite: "lax",
-          secure: true,
-        },
-      }
+      crossSubDomainCookies: {
+        enabled: true,
+        domain: `.corecraft.site`,
+      },
+    }
     : undefined,
-  trustedOrigins: (process.env.NEXT_PUBLIC_APP_URL ?? "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean),
+  trustedOrigins: [
+    'https://corecraft.site',
+    'https://servers.corecraft.site',
+    'https://shop.corecraft.site'
+  ]
 });
