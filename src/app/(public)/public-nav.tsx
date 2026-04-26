@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MenuIcon, SearchIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "./command-palette";
 import { DISCORD_URL } from "@/lib/site-content";
+import { navHref } from "@/lib/nav-links";
 
 function DiscordIcon({ className }: { className?: string }) {
   return (
@@ -22,17 +23,22 @@ function DiscordIcon({ className }: { className?: string }) {
 }
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/rules", label: "Rules" },
-  { href: "/staff", label: "Staff" },
-  { href: "/map", label: "Live Map" },
-  { href: "/shop", label: "Shop" },
+  { path: "/", label: "Home" },
+  { path: "/rules", label: "Rules" },
+  { path: "/staff", label: "Staff" },
+  { path: "/map", label: "Live Map" },
+  { path: "/shop", label: "Shop" },
 ] as const;
 
 export function PublicNav() {
   const pathname = usePathname();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [isMac, setIsMac] = useState(false);
+
+  const links = useMemo(
+    () => NAV_LINKS.map((l) => ({ ...l, ...navHref(l.path) })),
+    [],
+  );
 
   useEffect(() => {
     setIsMac(
@@ -54,25 +60,28 @@ export function PublicNav() {
 
   return (
     <>
-      {/* Desktop: nav links + search button */}
       <nav
         className="hidden md:flex items-center gap-1"
         aria-label="Main navigation"
       >
-        {NAV_LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "px-3 py-1.5 text-xs font-mono tracking-wide transition-colors rounded",
-              pathname === link.href
-                ? "text-[#4ade80] bg-[#4ade80]/10"
-                : "text-[#888] hover:text-[#e8e8e8] hover:bg-[#1a1a1a]",
-            )}
-          >
-            {link.label}
-          </Link>
-        ))}
+        {links.map((link) => {
+          const isActive = pathname === link.path;
+          const className = cn(
+            "px-3 py-1.5 text-xs font-mono tracking-wide transition-colors rounded",
+            isActive
+              ? "text-[#4ade80] bg-[#4ade80]/10"
+              : "text-[#888] hover:text-[#e8e8e8] hover:bg-[#1a1a1a]",
+          );
+          return link.external ? (
+            <a key={link.path} href={link.href} className={className}>
+              {link.label}
+            </a>
+          ) : (
+            <Link key={link.path} href={link.href} className={className}>
+              {link.label}
+            </Link>
+          );
+        })}
         <div className="ml-3 pl-3 border-l border-[#2a2a2a] flex items-center gap-2">
           {DISCORD_URL && (
             <a
@@ -101,7 +110,6 @@ export function PublicNav() {
         </div>
       </nav>
 
-      {/* Mobile: hamburger only (opens palette) */}
       <button
         type="button"
         className="md:hidden p-2 text-[#888] hover:text-[#e8e8e8] transition-colors"

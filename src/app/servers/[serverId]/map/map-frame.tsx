@@ -13,7 +13,13 @@ export function MapFrame({ port }: { port: number }) {
       setSrc(envUrl);
       return;
     }
-    setSrc(`${window.location.protocol}//${window.location.hostname}:${port}/`);
+    const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN;
+    const host = window.location.hostname;
+    if (baseDomain && (host === baseDomain || host.endsWith(`.${baseDomain}`))) {
+      setSrc(`https://map.${baseDomain}/`);
+      return;
+    }
+    setSrc(`${window.location.protocol}//${host}:${port}/`);
   }, [port]);
 
   if (!src) {

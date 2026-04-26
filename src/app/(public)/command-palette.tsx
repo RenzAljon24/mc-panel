@@ -17,6 +17,7 @@ import {
   MessageCircleIcon,
 } from "lucide-react";
 import { DISCORD_URL } from "@/lib/site-content";
+import { navHref } from "@/lib/nav-links";
 
 type Item = {
   id: string;
@@ -25,6 +26,8 @@ type Item = {
   group: string;
   icon: React.ComponentType<{ className?: string }>;
   href?: string;
+  path?: string;
+  external?: boolean;
   action?: () => void;
 };
 
@@ -50,12 +53,17 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
 
   const items = useMemo<Item[]>(
-    () => [
-      { id: "nav-home", label: "Home", group: "Navigation", icon: HomeIcon, href: "/" },
-      { id: "nav-rules", label: "Rules", group: "Navigation", icon: BookOpenIcon, href: "/rules" },
-      { id: "nav-staff", label: "Staff", group: "Navigation", icon: UsersIcon, href: "/staff" },
-      { id: "nav-map", label: "Live Map", group: "Navigation", icon: MapIcon, href: "/map" },
-      { id: "nav-shop", label: "Shop", hint: "cosmetics & coins — coming soon", group: "Navigation", icon: ShoppingBagIcon, href: "/shop" },
+    () => {
+      const nav = (path: string) => {
+        const t = navHref(path);
+        return { href: t.href, external: t.external, path };
+      };
+      return [
+      { id: "nav-home", label: "Home", group: "Navigation", icon: HomeIcon, ...nav("/") },
+      { id: "nav-rules", label: "Rules", group: "Navigation", icon: BookOpenIcon, ...nav("/rules") },
+      { id: "nav-staff", label: "Staff", group: "Navigation", icon: UsersIcon, ...nav("/staff") },
+      { id: "nav-map", label: "Live Map", group: "Navigation", icon: MapIcon, ...nav("/map") },
+      { id: "nav-shop", label: "Shop", hint: "cosmetics & coins — coming soon", group: "Navigation", icon: ShoppingBagIcon, ...nav("/shop") },
       ...(DISCORD_URL
         ? [
           {
@@ -71,7 +79,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           } satisfies Item,
         ]
         : []),
-    ],
+    ];
+    },
     [onOpenChange],
   );
 
@@ -99,7 +108,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   useEffect(() => {
     if (open) {
       setQuery("");
-      const currentIdx = items.findIndex((it) => it.href && it.href === pathname);
+      const currentIdx = items.findIndex((it) => it.path && it.path === pathname);
       setActiveIdx(currentIdx >= 0 ? currentIdx : 0);
       requestAnimationFrame(() => inputRef.current?.focus());
     }
@@ -144,7 +153,11 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       }
       if (it.href) {
         onOpenChange(false);
-        router.push(it.href);
+        if (it.external) {
+          window.location.href = it.href;
+        } else {
+          router.push(it.href);
+        }
       }
     },
     [onOpenChange, router],
@@ -235,7 +248,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   runningIndex += 1;
                   const idx = runningIndex;
                   const active = idx === activeIdx;
-                  const isCurrent = it.href ? pathname === it.href : false;
+                  const isCurrent = it.path ? pathname === it.path : false;
                   const Icon = it.icon;
                   const common =
                     "flex w-full items-center gap-3 px-4 py-2 text-left font-mono text-sm transition-colors relative";
@@ -264,15 +277,27 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     </>
                   );
                   return it.href ? (
-                    <Link
-                      key={it.id}
-                      href={it.href}
-                      onClick={() => onOpenChange(false)}
-                      onMouseEnter={() => setActiveIdx(idx)}
-                      className={`${common} ${tone}`}
-                    >
-                      {content}
-                    </Link>
+                    it.external ? (
+                      <a
+                        key={it.id}
+                        href={it.href}
+                        onClick={() => onOpenChange(false)}
+                        onMouseEnter={() => setActiveIdx(idx)}
+                        className={`${common} ${tone}`}
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <Link
+                        key={it.id}
+                        href={it.href}
+                        onClick={() => onOpenChange(false)}
+                        onMouseEnter={() => setActiveIdx(idx)}
+                        className={`${common} ${tone}`}
+                      >
+                        {content}
+                      </Link>
+                    )
                   ) : (
                     <button
                       key={it.id}
