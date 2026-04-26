@@ -8,6 +8,8 @@ const SUBDOMAIN_TO_PATH: Record<string, string> = {
   servers: "/servers",
 };
 
+const PASSTHROUGH_PREFIXES = ["/login", "/api", "/_next"];
+
 export function proxy(request: NextRequest) {
   const host = (request.headers.get("host") ?? "").toLowerCase().split(":")[0];
   if (!host) return NextResponse.next();
@@ -23,11 +25,19 @@ export function proxy(request: NextRequest) {
   if (!prefix) return NextResponse.next();
 
   const url = request.nextUrl.clone();
-  if (url.pathname.startsWith(prefix)) return NextResponse.next();
+
+  if (PASSTHROUGH_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(`${p}/`))) {
+    return NextResponse.next();
+  }
+
+  if (url.pathname === prefix || url.pathname.startsWith(`${prefix}/`)) {
+    return NextResponse.next();
+  }
+
   url.pathname = `${prefix}${url.pathname === "/" ? "" : url.pathname}`;
   return NextResponse.rewrite(url);
 }
 
 export const config = {
-  matcher: ["/((?!_next/|api/auth/|favicon.ico|opengraph-image|.*\\..*).*)"],
+  matcher: ["/((?!_next/|favicon.ico|opengraph-image|.*\\..*).*)"],
 };
