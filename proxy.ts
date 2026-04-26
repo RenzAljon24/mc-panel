@@ -73,6 +73,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  refactor: unify subdomain routing and auth into single middleware proxy with loop - safe redirects
   matcher: ["/((?!_next|favicon.ico|.*\\..*).*)"],
 };
