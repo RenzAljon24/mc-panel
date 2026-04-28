@@ -52,13 +52,19 @@ export async function runCommand(target: RconTarget, cmd: string): Promise<strin
 export async function listPlayers(target: RconTarget): Promise<string[]> {
   const raw = await runCommand(target, "list");
   const stripped = raw.replace(/§./g, "");
-  const idx = stripped.toLowerCase().indexOf("players online:");
-  if (idx === -1) return [];
-  const tail = stripped.slice(idx + "players online:".length);
-  return tail
-    .split(/[,\n\r]+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const match = stripped.match(/players online[:.]?\s*([\s\S]*)/i);
+  if (!match) return [];
+
+  const names: string[] = [];
+  for (const line of match[1].split(/\r?\n/)) {
+    const colon = line.indexOf(":");
+    const tail = colon >= 0 ? line.slice(colon + 1) : line;
+    for (const part of tail.split(",")) {
+      const name = part.trim();
+      if (name) names.push(name);
+    }
+  }
+  return names;
 }
 
 export async function broadcast(target: RconTarget, message: string): Promise<void> {
