@@ -14,7 +14,7 @@ export function MapPreview() {
 
   if (!src) {
     return (
-      <div className="w-full h-64 bg-[#0a0a0a] border border-[#1e1e1e] flex items-center justify-center">
+      <div className="w-full h-[28rem] bg-[#0a0a0a] flex items-center justify-center">
         <span className="font-mono text-xs text-[#444]">Loading map…</span>
       </div>
     );
@@ -24,7 +24,7 @@ export function MapPreview() {
     <iframe
       src={src}
       title="Live Dynmap preview"
-      className="w-full h-64 border-0 bg-[#0a0a0a]"
+      className="w-full h-[28rem] border-0 bg-[#0a0a0a]"
       loading="lazy"
     />
   );

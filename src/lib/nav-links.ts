@@ -13,7 +13,7 @@ export function navHref(path: string): NavTarget {
   const matchedKey = Object.keys(SUBDOMAIN_PATHS).find(
     (key) => path === key || path.startsWith(`${key}/`),
   );
-  if (!matchedKey) return { href: path, external: false };
+  if (!matchedKey) return { href: `https://${baseDomain}${path}`, external: true };
 
   const sub = SUBDOMAIN_PATHS[matchedKey];
   const rest = path.slice(matchedKey.length) || "/";
