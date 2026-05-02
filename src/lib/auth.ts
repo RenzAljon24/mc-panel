@@ -1,10 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
-
-const BASE_DOMAIN = process.env.NEXT_PUBLIC_BASE_DOMAIN;
-const enableCrossSubdomain = !!BASE_DOMAIN && process.env.NODE_ENV === "production";
-
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "sqlite" }),
   emailAndPassword: {
@@ -21,14 +17,13 @@ export const auth = betterAuth({
       role: { type: "string", required: false, defaultValue: "owner" },
     },
   },
-  advanced: enableCrossSubdomain
-    ? {
-      crossSubDomainCookies: {
-        enabled: true,
-        domain: `.corecraft.site`,
-      },
-    }
-    : undefined,
+  advanced:
+  {
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: `.corecraft.site`,
+    },
+  },
   trustedOrigins: [
     'https://corecraft.site',
     'https://servers.corecraft.site',

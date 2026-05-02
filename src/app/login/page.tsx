@@ -14,14 +14,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm space-y-8">
         {/* ASCII-art brand mark */}
         <div className="text-center">
-          <pre className="inline-block font-mono text-[10px] leading-tight text-foreground select-none">
-{`███╗   ███╗ ██████╗
-████╗ ████║██╔════╝
-██╔████╔██║██║
-██║╚██╔╝██║██║
-██║ ╚═╝ ██║╚██████╗
-╚═╝     ╚═╝ ╚═════╝  PANEL`}
-          </pre>
+          <h1 className="minecraft-title text-3xl sm:text-4xl md:text-5xl leading-tight text-black mb-4">CoreCraft</h1>
           <p className="mt-3 text-xs text-muted-foreground">Sign in to manage your Minecraft server</p>
         </div>
 

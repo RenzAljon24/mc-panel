@@ -21,7 +21,7 @@ export default async function PublicLayout({
             className="flex items-center gap-2 font-mono text-sm font-bold tracking-widest text-[#4ade80] hover:text-[#86efac] transition-colors"
           >
             <span className="minecraft-title text-xs leading-none">⛏</span>
-            <span className="hidden sm:inline">CoreCraft</span>
+            <span className="minecraft-title hidden sm:inline">CoreCraft</span>
             <span className="sm:hidden">MC</span>
           </Link>
 
